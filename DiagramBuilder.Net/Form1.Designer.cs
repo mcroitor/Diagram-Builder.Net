@@ -46,23 +46,29 @@ namespace DiagramBuilder.Net
 				menu.Items.Add(fileMenuItem);
 				var newFileMenuItem = new ToolStripMenuItem("New");
 				newFileMenuItem.Click += NewFileMenuItem_Click;
+				newFileMenuItem.ShortcutKeys = Keys.Control | Keys.N;
 				fileMenuItem.DropDownItems.Add(newFileMenuItem);
 				var openFileMenuItem = new ToolStripMenuItem("Open");
 				openFileMenuItem.Click += OpenFileMenuItem_Click;
+				openFileMenuItem.ShortcutKeys = Keys.Control | Keys.O;
 				fileMenuItem.DropDownItems.Add(openFileMenuItem);
 				var saveFileMenuItem = new ToolStripMenuItem("Save");
 				saveFileMenuItem.Click += SaveFileMenuItem_Click;
+				saveFileMenuItem.ShortcutKeys = Keys.Control | Keys.S;
 				fileMenuItem.DropDownItems.Add(saveFileMenuItem);
 				fileMenuItem.DropDownItems.Add("-");
 				var exportFileMenuItem = new ToolStripMenuItem("Export");
 				exportFileMenuItem.Click += ExportFileMenuItem_Click;
+				exportFileMenuItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.S;
 				fileMenuItem.DropDownItems.Add(exportFileMenuItem);
 				var exportAllFileMenuItem = new ToolStripMenuItem("Export All");
 				exportAllFileMenuItem.Click += ExportAllFileMenuItem_Click;
+				exportAllFileMenuItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.A;
 				fileMenuItem.DropDownItems.Add(exportAllFileMenuItem);
 				fileMenuItem.DropDownItems.Add("-");
 				var exitFileMenuItem = new ToolStripMenuItem("Exit");
 				exitFileMenuItem.Click += ExitFileMenuItem_Click;
+				exitFileMenuItem.ShortcutKeys = Keys.Alt | Keys.F4;
 				fileMenuItem.DropDownItems.Add(exitFileMenuItem);
 			}
 			{
@@ -76,9 +82,11 @@ namespace DiagramBuilder.Net
 				editMenuItem.DropDownItems.Add("-");
 				var addEditMenuItem = new ToolStripMenuItem("Add position");
 				addEditMenuItem.Click += AddEditMenuItem_Click;
+				addEditMenuItem.ShortcutKeys = Keys.Control | Keys.Alt | Keys.A;
 				editMenuItem.DropDownItems.Add(addEditMenuItem);
 				var removeEditMenuItem = new ToolStripMenuItem("Remove position");
 				removeEditMenuItem.Click += RemoveEditMenuItem_Click;
+				removeEditMenuItem.ShortcutKeys = Keys.Control | Keys.Alt | Keys.R;
 				editMenuItem.DropDownItems.Add(removeEditMenuItem);
 				editMenuItem.DropDownItems.Add("-");
 				var optionsEditMenuItem = new ToolStripMenuItem("Options");
@@ -107,7 +115,7 @@ namespace DiagramBuilder.Net
 				wk.Location = new System.Drawing.Point(0, 0);
 				wk.Width = this.fieldSize;
 				wk.Height = this.fieldSize;
-				wk.Font = new System.Drawing.Font(new FontFamily(fonts[this.selectedFont].GetName()), this.fieldSize - 8, GraphicsUnit.Pixel);
+				wk.Font = new System.Drawing.Font(new FontFamily(this.selectedFont, chessFontsCollection), this.fieldSize - 8, GraphicsUnit.Pixel);
 				wk.Padding = new System.Windows.Forms.Padding(0);
 				wk.Text = fonts[this.selectedFont].GetPiece("K0");
 				wk.Name = "K";
@@ -118,7 +126,7 @@ namespace DiagramBuilder.Net
 				wq.Location = new System.Drawing.Point(this.fieldSize, 0);
 				wq.Width = this.fieldSize;
 				wq.Height = this.fieldSize;
-				wq.Font = new System.Drawing.Font(new FontFamily(fonts[this.selectedFont].GetName()), this.fieldSize - 8, GraphicsUnit.Pixel);
+				wq.Font = new System.Drawing.Font(new FontFamily(this.selectedFont, chessFontsCollection), this.fieldSize - 8, GraphicsUnit.Pixel);
 				wq.Text = fonts[this.selectedFont].GetPiece("Q0");
 				wq.Name = "Q";
 				wq.Click += PieceClicked;
@@ -128,7 +136,7 @@ namespace DiagramBuilder.Net
 				wr.Location = new System.Drawing.Point(2 * this.fieldSize, 0);
 				wr.Width = this.fieldSize;
 				wr.Height = this.fieldSize;
-				wr.Font = new System.Drawing.Font(new FontFamily(fonts[this.selectedFont].GetName()), this.fieldSize - 8, GraphicsUnit.Pixel);
+				wr.Font = new System.Drawing.Font(new FontFamily(this.selectedFont, chessFontsCollection), this.fieldSize - 8, GraphicsUnit.Pixel);
 				wr.Text = fonts[this.selectedFont].GetPiece("R0");
 				wr.Name = "R";
 				wr.Click += PieceClicked;
@@ -138,7 +146,7 @@ namespace DiagramBuilder.Net
 				wb.Location = new System.Drawing.Point(3 * this.fieldSize, 0);
 				wb.Width = this.fieldSize;
 				wb.Height = this.fieldSize;
-				wb.Font = new System.Drawing.Font(new FontFamily(fonts[this.selectedFont].GetName()), this.fieldSize - 8, GraphicsUnit.Pixel);
+				wb.Font = new System.Drawing.Font(new FontFamily(this.selectedFont, chessFontsCollection), this.fieldSize - 8, GraphicsUnit.Pixel);
 				wb.Text = fonts[this.selectedFont].GetPiece("B0");
 				wb.Name = "B";
 				wb.Click += PieceClicked;
@@ -148,7 +156,7 @@ namespace DiagramBuilder.Net
 				wn.Location = new System.Drawing.Point(4 * this.fieldSize, 0);
 				wn.Width = this.fieldSize;
 				wn.Height = this.fieldSize;
-				wn.Font = new System.Drawing.Font(new FontFamily(fonts[this.selectedFont].GetName()), this.fieldSize - 8, GraphicsUnit.Pixel);
+				wn.Font = new System.Drawing.Font(new FontFamily(this.selectedFont, chessFontsCollection), this.fieldSize - 8, GraphicsUnit.Pixel);
 				wn.Text = fonts[this.selectedFont].GetPiece("N0");
 				wn.Name = "N";
 				wn.Click += PieceClicked;
@@ -158,7 +166,7 @@ namespace DiagramBuilder.Net
 				wp.Location = new System.Drawing.Point(5 * this.fieldSize, 0);
 				wp.Width = this.fieldSize;
 				wp.Height = this.fieldSize;
-				wp.Font = new System.Drawing.Font(new FontFamily(fonts[this.selectedFont].GetName()), this.fieldSize - 8, GraphicsUnit.Pixel);
+				wp.Font = new System.Drawing.Font(new FontFamily(this.selectedFont, chessFontsCollection), this.fieldSize - 8, GraphicsUnit.Pixel);
 				wp.Text = fonts[this.selectedFont].GetPiece("P0");
 				wp.Name = "P";
 				wp.Click += PieceClicked;
@@ -169,7 +177,7 @@ namespace DiagramBuilder.Net
 				bk.Location = new System.Drawing.Point(0, this.fieldSize);
 				bk.Width = this.fieldSize;
 				bk.Height = this.fieldSize;
-				bk.Font = new System.Drawing.Font(new FontFamily(fonts[this.selectedFont].GetName()), this.fieldSize - 8, GraphicsUnit.Pixel);
+				bk.Font = new System.Drawing.Font(new FontFamily(this.selectedFont, chessFontsCollection), this.fieldSize - 8, GraphicsUnit.Pixel);
 				bk.Text = fonts[this.selectedFont].GetPiece("k0");
 				bk.Name = "k";
 				bk.Click += PieceClicked;
@@ -179,7 +187,7 @@ namespace DiagramBuilder.Net
 				bq.Location = new System.Drawing.Point(this.fieldSize, this.fieldSize);
 				bq.Width = this.fieldSize;
 				bq.Height = this.fieldSize;
-				bq.Font = new System.Drawing.Font(new FontFamily(fonts[this.selectedFont].GetName()), this.fieldSize - 8, GraphicsUnit.Pixel);
+				bq.Font = new System.Drawing.Font(new FontFamily(this.selectedFont, chessFontsCollection), this.fieldSize - 8, GraphicsUnit.Pixel);
 				bq.Text = fonts[this.selectedFont].GetPiece("q0");
 				bq.Name = "q";
 				bq.Click += PieceClicked;
@@ -189,7 +197,7 @@ namespace DiagramBuilder.Net
 				br.Location = new System.Drawing.Point(2 * this.fieldSize, this.fieldSize);
 				br.Width = this.fieldSize;
 				br.Height = this.fieldSize;
-				br.Font = new System.Drawing.Font(new FontFamily(fonts[this.selectedFont].GetName()), this.fieldSize - 8, GraphicsUnit.Pixel);
+				br.Font = new System.Drawing.Font(new FontFamily(this.selectedFont, chessFontsCollection), this.fieldSize - 8, GraphicsUnit.Pixel);
 				br.Text = fonts[this.selectedFont].GetPiece("r0");
 				br.Name = "r";
 				br.Click += PieceClicked;
@@ -199,7 +207,7 @@ namespace DiagramBuilder.Net
 				bb.Location = new System.Drawing.Point(3 * this.fieldSize, this.fieldSize);
 				bb.Width = this.fieldSize;
 				bb.Height = this.fieldSize;
-				bb.Font = new System.Drawing.Font(new FontFamily(fonts[this.selectedFont].GetName()), this.fieldSize - 8, GraphicsUnit.Pixel);
+				bb.Font = new System.Drawing.Font(new FontFamily(this.selectedFont, chessFontsCollection), this.fieldSize - 8, GraphicsUnit.Pixel);
 				bb.Text = fonts[this.selectedFont].GetPiece("b0");
 				bb.Name = "b";
 				bb.Click += PieceClicked;
@@ -209,7 +217,7 @@ namespace DiagramBuilder.Net
 				bn.Location = new System.Drawing.Point(4 * this.fieldSize, this.fieldSize);
 				bn.Width = this.fieldSize;
 				bn.Height = this.fieldSize;
-				bn.Font = new System.Drawing.Font(new FontFamily(fonts[this.selectedFont].GetName()), this.fieldSize - 8, GraphicsUnit.Pixel);
+				bn.Font = new System.Drawing.Font(new FontFamily(this.selectedFont, chessFontsCollection), this.fieldSize - 8, GraphicsUnit.Pixel);
 				bn.Text = fonts[this.selectedFont].GetPiece("n0");
 				bn.Name = "n";
 				bn.Click += PieceClicked;
@@ -219,7 +227,7 @@ namespace DiagramBuilder.Net
 				bp.Location = new System.Drawing.Point(5 * this.fieldSize, this.fieldSize);
 				bp.Width = this.fieldSize;
 				bp.Height = this.fieldSize;
-				bp.Font = new System.Drawing.Font(new FontFamily(fonts[this.selectedFont].GetName()), this.fieldSize - 8, GraphicsUnit.Pixel);
+				bp.Font = new System.Drawing.Font(new FontFamily(this.selectedFont, chessFontsCollection), this.fieldSize - 8, GraphicsUnit.Pixel);
 				bp.Text = fonts[this.selectedFont].GetPiece("p0");
 				bp.Name = "p";
 				bp.Click += PieceClicked;
@@ -230,7 +238,7 @@ namespace DiagramBuilder.Net
 				clear.Location = new System.Drawing.Point(6 * this.fieldSize, 0);
 				clear.Width = this.fieldSize;
 				clear.Height = this.fieldSize;
-				clear.Font = new System.Drawing.Font(new FontFamily(fonts[this.selectedFont].GetName()), this.fieldSize - 8, GraphicsUnit.Pixel);
+				clear.Font = new System.Drawing.Font(new FontFamily(this.selectedFont, chessFontsCollection), this.fieldSize - 8, GraphicsUnit.Pixel);
 				clear.Text = fonts[this.selectedFont].GetPiece("LIGHT");
 				clear.Name = " ";
 				clear.Click += PieceClicked;
@@ -244,7 +252,7 @@ namespace DiagramBuilder.Net
 			this.boardView.Height = 400;
 			this.boardView.Padding = new System.Windows.Forms.Padding(0);
 			this.boardView.TextAlign = ContentAlignment.TopLeft;
-			this.boardView.Font = new System.Drawing.Font(new FontFamily(fonts[this.selectedFont].GetName()), this.fieldSize, GraphicsUnit.Pixel);
+			this.boardView.Font = new System.Drawing.Font(new FontFamily(this.selectedFont, chessFontsCollection), this.fieldSize, GraphicsUnit.Pixel);
 			this.boardView.Text = this.positions[this.currentPosition].ToView(fonts[this.selectedFont]);
 			this.boardView.MouseClick += SetPiece;
 
@@ -303,12 +311,12 @@ namespace DiagramBuilder.Net
 
 		private void PasteEditMenuItem_Click(object sender, EventArgs e)
 		{
-			throw new NotImplementedException();
+			MessageBox.Show("not implemented yet");
 		}
 
 		private void CopyEditMenuItem_Click(object sender, EventArgs e)
 		{
-			throw new NotImplementedException();
+			MessageBox.Show("not implemented yet");
 		}
 
 		private void RemoveEditMenuItem_Click(object sender, EventArgs e)
@@ -334,28 +342,40 @@ namespace DiagramBuilder.Net
 
 		private void OptionsEditMenuItem_Click(object sender, EventArgs e)
 		{
-			throw new NotImplementedException();
+			MessageBox.Show("not implemented yet");
 		}
 
 		private void ExportAllFileMenuItem_Click(object sender, EventArgs e)
 		{
-			throw new NotImplementedException();
+			string format = new string('0', this.NrOfDigits(positions.Count));
+			var aFont = new Font(new FontFamily(this.selectedFont), this.selectedSize, GraphicsUnit.Pixel);
+
+			for (int i = 0; i < positions.Count; ++i)
+			{
+				Bitmap diagram = new Bitmap((int)(10.5 * this.selectedSize), (int)(10 * this.selectedSize), PixelFormat.Format24bppRgb);
+				diagram.SetResolution(this.dpi, this.dpi);
+
+				Graphics g = Graphics.FromImage(diagram);
+				g.FillRectangle(Brushes.White, 0, 0, diagram.Width, diagram.Height);
+				g.DrawString(this.positions[i].ToView(fonts[this.selectedFont]), aFont, Brushes.Black, 0, 0);
+				diagram.Save(this.outputDir + "diagram" + (i+1).ToString(format) + ".png", ImageFormat.Png);
+			}
+			
+			MessageBox.Show("Export done");
 		}
 
 		private void ExportFileMenuItem_Click(object sender, EventArgs e)
 		{
+			var aFont = new Font(new FontFamily(this.selectedFont), this.selectedSize, GraphicsUnit.Pixel);
+
 			Bitmap diagram = new Bitmap((int)(10.5 * this.selectedSize), (int)(10 * this.selectedSize), PixelFormat.Format24bppRgb);
 			diagram.SetResolution(this.dpi, this.dpi);
 
 			Graphics g = Graphics.FromImage(diagram);
 			g.FillRectangle(Brushes.White, 0, 0, diagram.Width, diagram.Height);
-			//double fontSize = px2pt(this.fieldSize);
-			var aFont = new Font(new FontFamily(fonts[this.selectedFont].GetName()), this.selectedSize, GraphicsUnit.Pixel);
-			StringFormat stringFormat = new StringFormat();
-			stringFormat.Alignment = StringAlignment.Near;
-			stringFormat.LineAlignment = StringAlignment.Near;
-			g.DrawString(this.positions[this.currentPosition].ToView(this.fonts[this.selectedFont]), aFont, Brushes.Black, 0, 0, stringFormat);
-			diagram.Save("diagram.png", ImageFormat.Png);
+			g.DrawString(this.positions[this.currentPosition].ToView(this.fonts[this.selectedFont]), aFont, Brushes.Black, 0, 0);
+			diagram.Save(this.outputDir + "diagram.png", ImageFormat.Png);
+			MessageBox.Show("Export done");
 		}
 
 		private void FensListSelectIndex(object sender, EventArgs e)

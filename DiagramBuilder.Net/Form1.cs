@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Text;
 using System.Windows.Forms;
 
 namespace DiagramBuilder.Net
@@ -15,6 +16,7 @@ namespace DiagramBuilder.Net
 		Panel panel;
 
 		// structures
+		PrivateFontCollection chessFontsCollection;
 		Dictionary<string, ChessFonts.ChessFont> fonts = new Dictionary<string, ChessFonts.ChessFont>
 		{
 			{ "Chess Alpha", ChessFonts.ChessAlpha},
@@ -29,6 +31,8 @@ namespace DiagramBuilder.Net
 		int currentPosition;
 		string fileName;
 		string currentPiece = "";
+		string outputDir = ".\\output\\";
+		string fontsDir = ".\\fonts\\";
 		// image properties
 		int dpi = 300;
 		
@@ -39,31 +43,32 @@ namespace DiagramBuilder.Net
 			positions = new List<ChessBoard>();
 			this.positions.Add(ChessBoard.Empty());
 			this.fileName = "";
+			if(System.IO.Directory.Exists(this.outputDir) == false)
+			{
+				System.IO.Directory.CreateDirectory(this.outputDir);
+			}
+			InitializeFonts();
 			InitializeComponent();
 		}
 
-		//conversion pixel -> millimeter at 72 dpi
-		private double px2mm(double px)
+		private void InitializeFonts()
 		{
-			return px * 25.4 / this.dpi;
+			chessFontsCollection = new PrivateFontCollection();
+			string[] fontFiles = System.IO.Directory.GetFiles(this.fontsDir, "*.ttf");
+			foreach(var fontFile in fontFiles) {
+				chessFontsCollection.AddFontFile(fontFile);
+			}
 		}
 
-		//conversion millimeter at 72 dpi -> pixel
-		private double mm2px(double mm)
+		private int NrOfDigits(int number)
 		{
-			return mm * this.dpi / 25.4;
-		}
-
-		//conversion pixel -> point
-		private double px2pt(double px)
-		{
-			return px * 3 / 4;
-		}
-
-		//conversion point -> pixel
-		private double pt2px(double pt)
-		{
-			return pt * 4 / 3;
+			int result = 1;
+			while(number > 9)
+			{
+				++result;
+				number /= 10;
+			}
+			return result;
 		}
 	}
 }
