@@ -33,6 +33,9 @@ namespace DiagramBuilder.Net
 		string currentPiece = "";
 		string outputDir = ".\\output\\";
 		string fontsDir = ".\\fonts\\";
+		bool MovePiece = false;
+		int colMovedPiece = -1;
+		int rowMovedPiece = -1;
 		// image properties
 		int dpi = 300;
 		

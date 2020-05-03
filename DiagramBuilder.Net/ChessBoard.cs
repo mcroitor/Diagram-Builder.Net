@@ -6,6 +6,23 @@ namespace DiagramBuilder.Net
 {
 	public class ChessBoard
 	{
+		public class Piece
+		{
+			public static string NoPiece = " ";
+			public static string WhiteKing = "K";
+			public static string WhiteQueen = "Q";
+			public static string WhiteRook = "R";
+			public static string WhiteBishop = "B";
+			public static string WhiteKnight = "N";
+			public static string WhitePawn = "P";
+
+			public static string BlackKing = "k";
+			public static string BlackQueen = "q";
+			public static string BlackRook = "r";
+			public static string BlackBishop = "b";
+			public static string BlackKnight = "n";
+			public static string BlackPawn = "p";
+		}
 		private static string[,] EMPTY_BOARD =
 		{
 		//	  A    B    C    D    E    F    G    H
@@ -124,25 +141,6 @@ namespace DiagramBuilder.Net
 			view += font.GetPiece("BOTTOM");
 			return view;
 		}
-		public string[] GetRows(ChessFonts.ChessFont font)
-		{
-			string[] view = new string[8];
-			for (int row = 0; row < 8; ++row)
-			{
-				for (int column = 7; column >= 0; --column)
-				{
-					if (brd[column, row] == " ")
-					{
-						view[row] += font.GetPiece((column + row) % 2 == 1 ? "LIGHT" : "DARK");
-					}
-					else
-					{
-						view[row] += font.GetPiece(brd[column, row] + (column + row + 1) % 2);
-					}
-				}
-			}
-			return view;
-		}
 
 		public void SetField(int column, int row, string piece)
 		{
@@ -186,6 +184,11 @@ namespace DiagramBuilder.Net
 					return;
 				}
 			}
+		}
+
+		public string GetPiece(int colMovedPiece, int rowMovedPiece)
+		{
+			return brd[rowMovedPiece, colMovedPiece];
 		}
 	}
 }

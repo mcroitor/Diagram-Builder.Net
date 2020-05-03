@@ -243,6 +243,17 @@ namespace DiagramBuilder.Net
 				clear.Name = " ";
 				clear.Click += PieceClicked;
 				this.panel.Controls.Add(clear);
+
+				Button move = new System.Windows.Forms.Button();
+				move.Location = new System.Drawing.Point(6 * this.fieldSize, this.fieldSize);
+				move.Width = this.fieldSize;
+				move.Height = this.fieldSize;
+				move.Font = new System.Drawing.Font(new FontFamily(this.selectedFont, chessFontsCollection), this.fieldSize - 8, GraphicsUnit.Pixel);
+				move.Text = "";
+				move.Image = Image.FromFile(".\\images\\arrow.png");
+				move.Name = " ";
+				move.Click += PieceMove;
+				this.panel.Controls.Add(move);
 			}
 
 			this.boardView = new System.Windows.Forms.Label();
@@ -295,6 +306,16 @@ namespace DiagramBuilder.Net
 			//this.Controls.Add(this.fen);
 			this.Controls.Add(this.fensList);
 			this.UpdateView();
+		}
+
+		private void PieceMove(object sender, EventArgs e)
+		{
+			this.MovePiece = true;
+			foreach (Button btn in this.panel.Controls)
+			{
+				btn.BackColor = default(Color);
+			}
+			((Button)sender).BackColor = Color.Coral;
 		}
 
 		private void FontSelect_SelectedIndexChanged(object sender, EventArgs e)
@@ -463,6 +484,7 @@ namespace DiagramBuilder.Net
 
 		private void PieceClicked(object sender, EventArgs e)
 		{
+			this.MovePiece = false;
 			this.currentPiece = ((System.Windows.Forms.Button)(sender)).Name;
 			foreach(Button btn in this.panel.Controls)
 			{
@@ -471,22 +493,36 @@ namespace DiagramBuilder.Net
 			((Button)sender).BackColor = Color.Coral;
 		}
 
-		private void Fen_TextChanged(object sender, System.EventArgs e)
-		{
-			//this.board.SetBoard(((System.Windows.Forms.TextBox)(sender)).Text);
-			//this.boardView.Text = this.board.ToView(this.font);
-		}
 		private void SetPiece(Object sender, MouseEventArgs args)
 		{
 			int col = 9 - args.X / this.fieldSize - 1;
 			int row = args.Y / this.fieldSize - 1;
-			if (row > 7 || row < 0 || col > 7 || col < 0) return; 
-
-			if (this.currentPiece != "")
+			if (row > 7 || row < 0 || col > 7 || col < 0) return;
+			if(this.MovePiece == true)
 			{
-				this.positions[this.currentPosition].SetField(row, col, currentPiece);
-				this.UpdateView();
+				// select
+				if(this.colMovedPiece == -1)
+				{
+					this.colMovedPiece = col;
+					this.rowMovedPiece = row;
+				}
+				//release
+				else
+				{
+					currentPiece = this.positions[this.currentPosition].GetPiece(this.rowMovedPiece, this.colMovedPiece);
+					this.positions[this.currentPosition].SetField(this.rowMovedPiece, this.colMovedPiece, " ");
+					this.positions[this.currentPosition].SetField(row, col, currentPiece);
+					this.MovePiece = false;
+				}
 			}
+			else
+			{
+				if (this.currentPiece != "")
+				{
+					this.positions[this.currentPosition].SetField(row, col, currentPiece);
+				}
+			}
+			this.UpdateView();
 		}
 		#endregion
 	}
