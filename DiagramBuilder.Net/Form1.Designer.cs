@@ -74,9 +74,11 @@ namespace DiagramBuilder.Net
 			{
 				ToolStripMenuItem editMenuItem = new ToolStripMenuItem("Edit");
 				var copyEditMenuItem = new ToolStripMenuItem("Copy");
+				copyEditMenuItem.ShortcutKeys = Keys.Control | Keys.C;
 				copyEditMenuItem.Click += CopyEditMenuItem_Click;
 				editMenuItem.DropDownItems.Add(copyEditMenuItem);
 				var pasteEditMenuItem = new ToolStripMenuItem("Paste");
+				pasteEditMenuItem.ShortcutKeys = Keys.Control | Keys.V;
 				pasteEditMenuItem.Click += PasteEditMenuItem_Click;
 				editMenuItem.DropDownItems.Add(pasteEditMenuItem);
 				editMenuItem.DropDownItems.Add("-");
@@ -332,12 +334,17 @@ namespace DiagramBuilder.Net
 
 		private void PasteEditMenuItem_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show("not implemented yet");
+			if (Clipboard.ContainsText()) {
+				this.positions[currentPosition].SetBoard(Clipboard.GetText());
+
+			}
+			//MessageBox.Show("not implemented yet");
 		}
 
 		private void CopyEditMenuItem_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show("not implemented yet");
+			Clipboard.SetText(this.positions[currentPosition].ToFen());
+			//MessageBox.Show("not implemented yet");
 		}
 
 		private void RemoveEditMenuItem_Click(object sender, EventArgs e)

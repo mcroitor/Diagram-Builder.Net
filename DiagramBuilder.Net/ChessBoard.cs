@@ -88,12 +88,12 @@ namespace DiagramBuilder.Net
 		public string ToFen()
 		{
 			string fen = "";
-			for (int row = 7; row >= 0; --row)
+			for (int row = 0; row < 8; ++row)
 			{
 				int countEmpty = 0;
-				for (int column = 0; column < 8; ++column)
+				for (int column = 7; column >=0; --column)
 				{
-					if (brd[row, column] == " ")
+					if (brd[column, row] == " ")
 					{
 						++countEmpty;
 					}
@@ -103,14 +103,15 @@ namespace DiagramBuilder.Net
 						{
 							fen += countEmpty.ToString();
 						}
-						fen += brd[row, column];
+						fen += brd[column, row];
+						countEmpty = 0;
 					}
 				}
 				if (countEmpty != 0)
 				{
 					fen += countEmpty.ToString();
 				}
-				if (row != 0)
+				if (row != 7)
 				{
 					fen += "/";
 				}
