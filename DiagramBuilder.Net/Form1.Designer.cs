@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace DiagramBuilder.Net
@@ -40,7 +41,7 @@ namespace DiagramBuilder.Net
 			this.Text = "DiagramBuilder.Net";
 
 			// menu
-			menu = new MenuStrip();
+			var menu = new MenuStrip();
 			{
 				ToolStripMenuItem fileMenuItem = new ToolStripMenuItem("File");
 				menu.Items.Add(fileMenuItem);
@@ -91,23 +92,46 @@ namespace DiagramBuilder.Net
 				removeEditMenuItem.ShortcutKeys = Keys.Control | Keys.Alt | Keys.R;
 				editMenuItem.DropDownItems.Add(removeEditMenuItem);
 				editMenuItem.DropDownItems.Add("-");
+				var initBoardEditMenuItem = new ToolStripMenuItem("Init board");
+				initBoardEditMenuItem.Click += InitBoardEditMenuItem_Click;
+				initBoardEditMenuItem.ShortcutKeys = Keys.Control | Keys.Alt | Keys.I;
+				editMenuItem.DropDownItems.Add(initBoardEditMenuItem);
+				var clearBoardEditMenuItem = new ToolStripMenuItem("Clear board");
+				clearBoardEditMenuItem.Click += ClearBoardEditMenuItem_Click;
+				clearBoardEditMenuItem.ShortcutKeys = Keys.Control | Keys.Alt | Keys.C;
+				editMenuItem.DropDownItems.Add(clearBoardEditMenuItem);
+				editMenuItem.DropDownItems.Add("-");
 				var optionsEditMenuItem = new ToolStripMenuItem("Options");
 				optionsEditMenuItem.Click += OptionsEditMenuItem_Click;
 				editMenuItem.DropDownItems.Add(optionsEditMenuItem);
 				menu.Items.Add(editMenuItem);
 			}
 			{
-				ToolStripMenuItem helpMenuItem = new ToolStripMenuItem("Help");
+				var helpMenuItem = new ToolStripMenuItem("Help");
+				helpMenuItem.Click += HelpMenuItem_Click;
 				menu.Items.Add(helpMenuItem);
 			}
 						
+			// set toolbar
+			var toolbar = new ToolStrip();
+			{
+				var newPositionToolStripButton = new ToolStripButton(Image.FromFile(".\\images\\add.png"));
+				newPositionToolStripButton.Click += AddEditMenuItem_Click;
+				toolbar.Items.Add(newPositionToolStripButton);
+			}
+			{
+				var removePositionToolStripButton = new ToolStripButton(Image.FromFile(".\\images\\remove.png"));
+				removePositionToolStripButton.Click += RemoveEditMenuItem_Click;
+				toolbar.Items.Add(removePositionToolStripButton);
+			}
+			this.Controls.Add(toolbar);
 			this.Controls.Add(menu);
 
 			// set panel
 			{
 				this.panel = new System.Windows.Forms.Panel();
 
-				this.panel.Location = new System.Drawing.Point(10, 30);
+				this.panel.Location = new System.Drawing.Point(10, 50);
 				this.panel.Width = 420;
 				this.panel.Height = 84;
 				this.panel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
@@ -259,7 +283,7 @@ namespace DiagramBuilder.Net
 			}
 
 			this.boardView = new System.Windows.Forms.Label();
-			this.boardView.Location = new System.Drawing.Point(10, 120);
+			this.boardView.Location = new System.Drawing.Point(10, 140);
 			this.boardView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.boardView.Width = 420;
 			this.boardView.Height = 400;
@@ -270,8 +294,8 @@ namespace DiagramBuilder.Net
 			this.boardView.MouseClick += SetPiece;
 
 			this.fontSelect = new ComboBox();
-			this.fontSelect.Items.AddRange(new string[] { "Chess Alpha", "Chess Berlin", "Chess Cases", "Chess Kingdom"});
-			this.fontSelect.Location = new Point(10, 530);
+			this.fontSelect.Items.AddRange(new string[] { "Chess Alpha 2", "Chess Berlin", "Chess Cases", "Chess Kingdom", "Chess Merida"});
+			this.fontSelect.Location = new Point(10, 550);
 			this.fontSelect.SelectedIndex = 0;
 			this.fontSelect.Width = 200;
 			this.fontSelect.SelectedIndexChanged += FontSelect_SelectedIndexChanged;
@@ -279,7 +303,7 @@ namespace DiagramBuilder.Net
 
 			this.fontSize = new ComboBox();
 			this.fontSize.Items.AddRange(new string[] { "20", "30", "40", "50", "60", "70", "80", "90" });
-			this.fontSize.Location = new Point(220, 530);
+			this.fontSize.Location = new Point(220, 550);
 			this.fontSize.SelectedIndex = 0;
 			this.fontSize.Width = 200;
 			this.fontSize.SelectedIndexChanged += FontSize_SelectedIndexChanged;
@@ -287,7 +311,7 @@ namespace DiagramBuilder.Net
 
 			// fen list panel
 			this.fensList = new ListView();
-			this.fensList.Location = new Point(440, 30);
+			this.fensList.Location = new Point(440, 50);
 			this.fensList.View = View.Details;
 			this.fensList.GridLines = true;
 			this.fensList.FullRowSelect = true;
@@ -307,6 +331,25 @@ namespace DiagramBuilder.Net
 			this.Controls.Add(this.panel);
 			//this.Controls.Add(this.fen);
 			this.Controls.Add(this.fensList);
+			this.UpdateView();
+		}
+
+		private void HelpMenuItem_Click(object sender, EventArgs e)
+		{
+			System.Windows.Forms.MessageBox.Show("Diagram Builder.Net " + Assembly.GetExecutingAssembly().GetName().Version + "\n" +
+				"Simple and buggy program.\n" + 
+				"You can use it in any way.", "About");
+		}
+
+		private void ClearBoardEditMenuItem_Click(object sender, EventArgs e)
+		{
+			this.positions[currentPosition] = ChessBoard.Empty();
+			this.UpdateView();
+		}
+
+		private void InitBoardEditMenuItem_Click(object sender, EventArgs e)
+		{
+			this.positions[currentPosition] = ChessBoard.Initial();
 			this.UpdateView();
 		}
 
@@ -336,15 +379,13 @@ namespace DiagramBuilder.Net
 		{
 			if (Clipboard.ContainsText()) {
 				this.positions[currentPosition].SetBoard(Clipboard.GetText());
-
+				this.UpdateView();
 			}
-			//MessageBox.Show("not implemented yet");
 		}
 
 		private void CopyEditMenuItem_Click(object sender, EventArgs e)
 		{
 			Clipboard.SetText(this.positions[currentPosition].ToFen());
-			//MessageBox.Show("not implemented yet");
 		}
 
 		private void RemoveEditMenuItem_Click(object sender, EventArgs e)
@@ -519,7 +560,8 @@ namespace DiagramBuilder.Net
 					currentPiece = this.positions[this.currentPosition].GetPiece(this.rowMovedPiece, this.colMovedPiece);
 					this.positions[this.currentPosition].SetField(this.rowMovedPiece, this.colMovedPiece, " ");
 					this.positions[this.currentPosition].SetField(row, col, currentPiece);
-					this.MovePiece = false;
+					this.colMovedPiece = -1;
+					this.rowMovedPiece = -1;
 				}
 			}
 			else
@@ -527,6 +569,7 @@ namespace DiagramBuilder.Net
 				if (this.currentPiece != "")
 				{
 					this.positions[this.currentPosition].SetField(row, col, currentPiece);
+					this.currentPiece = "";
 				}
 			}
 			this.UpdateView();

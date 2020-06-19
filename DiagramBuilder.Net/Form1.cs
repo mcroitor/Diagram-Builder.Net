@@ -8,7 +8,6 @@ namespace DiagramBuilder.Net
 	public partial class Form1 : Form
 	{
 		// UI
-		private MenuStrip menu;
 		private ListView fensList;
 		private Label boardView;
 		private ComboBox fontSelect;
@@ -17,12 +16,13 @@ namespace DiagramBuilder.Net
 
 		// structures
 		PrivateFontCollection chessFontsCollection;
-		Dictionary<string, ChessFonts.ChessFont> fonts = new Dictionary<string, ChessFonts.ChessFont>
+		private Dictionary<string, ChessFonts.ChessFont> fonts = new Dictionary<string, ChessFonts.ChessFont>
 		{
-			{"Chess Alpha", ChessFonts.ChessAlpha},
-			{"Chess Berlin", ChessFonts.ChessBerlin}, 
-			{"Chess Cases", ChessFonts.ChessCases}, 
-			{"Chess Kingdom", ChessFonts.ChessKingdom} 
+			{"Chess Alpha 2", ChessFonts.Alpha},
+			{"Chess Berlin", ChessFonts.Berlin}, 
+			{"Chess Cases", ChessFonts.Cases}, 
+			{"Chess Kingdom", ChessFonts.Kingdom},
+			{"Chess Merida", ChessFonts.Merida}
 		};
 		string selectedFont;
 		int selectedSize = 40;
@@ -42,7 +42,7 @@ namespace DiagramBuilder.Net
 		public Form1()
 		{
 			currentPosition = 0;
-			selectedFont = "Chess Alpha";
+			selectedFont = "Chess Alpha 2";
 			positions = new List<ChessBoard>();
 			this.positions.Add(ChessBoard.Empty());
 			this.fileName = "";
