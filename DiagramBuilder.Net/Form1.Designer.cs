@@ -493,6 +493,7 @@ namespace DiagramBuilder.Net
 		{
 			OpenFileDialog openFileDialog = new OpenFileDialog();
 			openFileDialog.Filter = "epd|*.epd|fen|*.fen|All files|*.*";
+			openFileDialog.InitialDirectory = Application.StartupPath + "\\fens";
 			if (openFileDialog.ShowDialog() == DialogResult.OK)
 			{
 				this.fileName = openFileDialog.FileName;
@@ -569,7 +570,7 @@ namespace DiagramBuilder.Net
 				if (this.currentPiece != "")
 				{
 					this.positions[this.currentPosition].SetField(row, col, currentPiece);
-					this.currentPiece = "";
+					//this.currentPiece = "";
 				}
 			}
 			this.UpdateView();
