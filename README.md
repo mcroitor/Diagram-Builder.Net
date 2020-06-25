@@ -21,3 +21,4 @@ Two versions, .Net Core and .Net Framework. Fix some bugs. Implemented functiona
  - import pgn format
  - import olv format
  - export to JPEG, TIFF
+ - "Always on top" option
