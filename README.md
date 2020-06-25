@@ -16,7 +16,7 @@ Two versions, .Net Core and .Net Framework. Fix some bugs. Implemented functiona
  
 # TO DO
  - extend toolbar
- - implement deafult options
+ - implement change / save deafult options
  - highlight piece moved on board
  - import pgn format
  - import olv format
