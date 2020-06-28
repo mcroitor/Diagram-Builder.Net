@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing.Text;
 using System.Windows.Forms;
 
@@ -11,7 +12,7 @@ namespace DiagramBuilder.Net
 		private ListView fensList;
 		private Label boardView;
 		private ComboBox fontSelect;
-		private ComboBox fontSize;
+		private NumericUpDown fontSize;
 		private Panel panel;
 
 		// structures
@@ -24,25 +25,41 @@ namespace DiagramBuilder.Net
 			{"Chess Kingdom", ChessFonts.Kingdom},
 			{"Chess Merida", ChessFonts.Merida}
 		};
-		string selectedFont;
-		int selectedSize = 40;
 		int fieldSize = 40;
 		List<ChessBoard> positions;
 		int currentPosition;
 		string fileName;
 		string currentPiece = "";
-		string outputDir = ".\\output\\";
 		string fontsDir = ".\\fonts\\";
 		bool MovePiece = false;
 		int colMovedPiece = -1;
 		int rowMovedPiece = -1;
 		// image properties
 		int dpi = 300;
-		
+
+		//configurable options
+		string selectedFont;
+		int selectedSize = 40;
+		string outputDir = ".\\output\\";
+		string workDir;
+		bool alwaysOnTop = false;
+
 		public Form1()
 		{
 			currentPosition = 0;
-			selectedFont = "Chess Alpha 2";
+			// selectedFont = "Chess Alpha 2";
+			selectedFont = ConfigurationManager.AppSettings["DefaultFont"] ?? "Chess Alpha 2";
+			if(ConfigurationManager.AppSettings["DefaultSize"] != null)
+			{
+				selectedSize = int.Parse(ConfigurationManager.AppSettings["DefaultSize"]);
+			}
+			outputDir = ConfigurationManager.AppSettings["OutputDir"] ?? ".\\output\\";
+			workDir = ConfigurationManager.AppSettings["WorkDir"] ?? ".\\fens\\";
+			if (ConfigurationManager.AppSettings["OnTop"] != null)
+			{
+				alwaysOnTop = bool.Parse(ConfigurationManager.AppSettings["OnTop"]);
+			}
+
 			positions = new List<ChessBoard>();
 			this.positions.Add(ChessBoard.Empty());
 			this.fileName = "";
@@ -50,6 +67,7 @@ namespace DiagramBuilder.Net
 			CheckIntegrity();
 			InitializeFonts();
 			InitializeComponent();
+			this.TopMost = alwaysOnTop;
 		}
 
 		private void CheckIntegrity()

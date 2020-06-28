@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Diagram_Builder.Net;
+using System;
+using System.Configuration;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -100,6 +102,11 @@ namespace DiagramBuilder.Net
 				clearBoardEditMenuItem.Click += ClearBoardEditMenuItem_Click;
 				clearBoardEditMenuItem.ShortcutKeys = Keys.Control | Keys.Alt | Keys.C;
 				editMenuItem.DropDownItems.Add(clearBoardEditMenuItem);
+				editMenuItem.DropDownItems.Add("-"); 
+				var pinAppEditMenuItem = new ToolStripMenuItem("Always on top");
+				pinAppEditMenuItem.Click += PinAppEditMenuItem_Click;
+				pinAppEditMenuItem.ShortcutKeys = Keys.Control | Keys.Alt | Keys.P;
+				editMenuItem.DropDownItems.Add(pinAppEditMenuItem);
 				editMenuItem.DropDownItems.Add("-");
 				var optionsEditMenuItem = new ToolStripMenuItem("Options");
 				optionsEditMenuItem.Click += OptionsEditMenuItem_Click;
@@ -111,7 +118,7 @@ namespace DiagramBuilder.Net
 				helpMenuItem.Click += HelpMenuItem_Click;
 				menu.Items.Add(helpMenuItem);
 			}
-						
+
 			// set toolbar
 			var toolbar = new ToolStrip();
 			{
@@ -123,6 +130,22 @@ namespace DiagramBuilder.Net
 				var removePositionToolStripButton = new ToolStripButton(Image.FromFile(".\\images\\remove.png"));
 				removePositionToolStripButton.Click += RemoveEditMenuItem_Click;
 				toolbar.Items.Add(removePositionToolStripButton);
+			}
+			{
+				var clearPositionToolStripButton = new ToolStripButton(Image.FromFile(".\\images\\clear.png"));
+				clearPositionToolStripButton.Click += ClearBoardEditMenuItem_Click;
+				toolbar.Items.Add(clearPositionToolStripButton);
+			}
+			{
+				var initPositionToolStripButton = new ToolStripButton(Image.FromFile(".\\images\\init.png"));
+				initPositionToolStripButton.Click += InitBoardEditMenuItem_Click;
+				toolbar.Items.Add(initPositionToolStripButton);
+			}
+			{
+				var pinAppToolStripButton = new ToolStripButton(Image.FromFile(".\\images\\pin.png"));
+				pinAppToolStripButton.Click += PinAppEditMenuItem_Click;
+				pinAppToolStripButton.BackColor = (alwaysOnTop) ? Color.Yellow : this.BackColor;
+				toolbar.Items.Add(pinAppToolStripButton);
 			}
 			this.Controls.Add(toolbar);
 			this.Controls.Add(menu);
@@ -294,19 +317,23 @@ namespace DiagramBuilder.Net
 			this.boardView.MouseClick += SetPiece;
 
 			this.fontSelect = new ComboBox();
-			this.fontSelect.Items.AddRange(new string[] { "Chess Alpha 2", "Chess Berlin", "Chess Cases", "Chess Kingdom", "Chess Merida"});
+			this.fontSelect.Items.AddRange(new string[] { "Chess Alpha 2", "Chess Berlin", "Chess Cases", "Chess Kingdom", "Chess Merida" });
 			this.fontSelect.Location = new Point(10, 550);
 			this.fontSelect.SelectedIndex = 0;
 			this.fontSelect.Width = 200;
+			this.fontSelect.SelectedIndex = this.fontSelect.FindString(selectedFont);
 			this.fontSelect.SelectedIndexChanged += FontSelect_SelectedIndexChanged;
 			this.Controls.Add(this.fontSelect);
 
-			this.fontSize = new ComboBox();
-			this.fontSize.Items.AddRange(new string[] { "20", "30", "40", "50", "60", "70", "80", "90" });
+			this.fontSize = new NumericUpDown();
+			this.fontSize.Value = new decimal(new int[] {
+			this.selectedSize,
+			0,
+			0,
+			0});
 			this.fontSize.Location = new Point(220, 550);
-			this.fontSize.SelectedIndex = 0;
 			this.fontSize.Width = 200;
-			this.fontSize.SelectedIndexChanged += FontSize_SelectedIndexChanged;
+			this.fontSize.ValueChanged += FontSize_ValueChanged;
 			this.Controls.Add(this.fontSize);
 
 			// fen list panel
@@ -334,10 +361,17 @@ namespace DiagramBuilder.Net
 			this.UpdateView();
 		}
 
+		private void PinAppEditMenuItem_Click(object sender, EventArgs e)
+		{
+			alwaysOnTop = !alwaysOnTop;
+			this.TopMost = alwaysOnTop;
+			((ToolStripButton)sender).BackColor = (alwaysOnTop) ? Color.Yellow : this.BackColor;
+		}
+
 		private void HelpMenuItem_Click(object sender, EventArgs e)
 		{
 			System.Windows.Forms.MessageBox.Show("Diagram Builder.Net " + Assembly.GetExecutingAssembly().GetName().Version + "\n" +
-				"Simple and buggy program.\n" + 
+				"Simple and buggy program.\n" +
 				"You can use it in any way.", "About");
 		}
 
@@ -370,14 +404,15 @@ namespace DiagramBuilder.Net
 			this.UpdateView();
 		}
 
-		private void FontSize_SelectedIndexChanged(object sender, EventArgs e)
+		private void FontSize_ValueChanged(object sender, EventArgs e)
 		{
-			this.selectedSize = Int32.Parse(((ComboBox)(sender)).SelectedItem.ToString());
+			this.selectedSize = (int)((NumericUpDown)sender).Value;
 		}
 
 		private void PasteEditMenuItem_Click(object sender, EventArgs e)
 		{
-			if (Clipboard.ContainsText()) {
+			if (Clipboard.ContainsText())
+			{
 				this.positions[currentPosition].SetBoard(Clipboard.GetText());
 				this.UpdateView();
 			}
@@ -391,14 +426,15 @@ namespace DiagramBuilder.Net
 		private void RemoveEditMenuItem_Click(object sender, EventArgs e)
 		{
 			this.positions.RemoveAt(currentPosition);
-			if(this.positions.Count == 0)
+			if (this.positions.Count == 0)
 			{
 				this.positions.Add(ChessBoard.Empty());
 			}
-			if (this.currentPosition >= this.positions.Count) { 
+			if (this.currentPosition >= this.positions.Count)
+			{
 				--this.currentPosition;
 			}
-			
+
 			this.UpdateView();
 		}
 
@@ -411,7 +447,19 @@ namespace DiagramBuilder.Net
 
 		private void OptionsEditMenuItem_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show("not implemented yet");
+			var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+			var settings = configFile.AppSettings.Settings;
+			var optionsForm = new OptionsForm(settings);
+
+			this.TopMost = false;
+
+			if (optionsForm.ShowDialog() == DialogResult.OK)
+			{
+				settings = optionsForm.defaultOptions;
+				configFile.Save(ConfigurationSaveMode.Modified);
+				ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
+			}
+			this.TopMost = alwaysOnTop;
 		}
 
 		private void ExportAllFileMenuItem_Click(object sender, EventArgs e)
@@ -427,9 +475,9 @@ namespace DiagramBuilder.Net
 				Graphics g = Graphics.FromImage(diagram);
 				g.FillRectangle(Brushes.White, 0, 0, diagram.Width, diagram.Height);
 				g.DrawString(this.positions[i].ToView(fonts[this.selectedFont]), aFont, Brushes.Black, 0, 0);
-				diagram.Save(this.outputDir + "diagram" + (i+1).ToString(format) + ".png", ImageFormat.Png);
+				diagram.Save(this.outputDir + "diagram" + (i + 1).ToString(format) + ".png", ImageFormat.Png);
 			}
-			
+
 			MessageBox.Show("Export done");
 		}
 
@@ -449,7 +497,7 @@ namespace DiagramBuilder.Net
 
 		private void FensListSelectIndex(object sender, EventArgs e)
 		{
-			if(((ListView)sender).SelectedIndices.Count == 0 || this.currentPosition == ((ListView)sender).SelectedIndices[0])
+			if (((ListView)sender).SelectedIndices.Count == 0 || this.currentPosition == ((ListView)sender).SelectedIndices[0])
 			{
 				return;
 			}
@@ -482,7 +530,7 @@ namespace DiagramBuilder.Net
 			// Open SaveFileDialog
 			SaveFileDialog saveFileDialog = new SaveFileDialog();
 			saveFileDialog.Filter = "epd|*.epd|fen|*.fen|All files|*.*";
-			if(saveFileDialog.ShowDialog() == DialogResult.OK)
+			if (saveFileDialog.ShowDialog() == DialogResult.OK)
 			{
 				fileName = saveFileDialog.FileName;
 			}
@@ -493,20 +541,21 @@ namespace DiagramBuilder.Net
 		{
 			OpenFileDialog openFileDialog = new OpenFileDialog();
 			openFileDialog.Filter = "epd|*.epd|fen|*.fen|All files|*.*";
-			openFileDialog.InitialDirectory = Application.StartupPath + "\\fens";
+			openFileDialog.InitialDirectory = Application.StartupPath + workDir;
 			if (openFileDialog.ShowDialog() == DialogResult.OK)
 			{
 				this.fileName = openFileDialog.FileName;
 				this.positions.Clear();
 				this.currentPosition = 0;
 				StreamReader reader = new StreamReader(this.fileName);
-				while(reader.EndOfStream == false)
+				while (reader.EndOfStream == false)
 				{
 					string line = reader.ReadLine();
 					ChessBoard board = ChessBoard.Empty();
 					board.SetBoard(line);
 					this.positions.Add(board);
 				}
+				reader.Close();
 				this.UpdateView();
 			}
 		}
@@ -535,7 +584,7 @@ namespace DiagramBuilder.Net
 		{
 			this.MovePiece = false;
 			this.currentPiece = ((System.Windows.Forms.Button)(sender)).Name;
-			foreach(Button btn in this.panel.Controls)
+			foreach (Button btn in this.panel.Controls)
 			{
 				btn.BackColor = default(Color);
 			}
@@ -547,10 +596,14 @@ namespace DiagramBuilder.Net
 			int col = 9 - args.X / this.fieldSize - 1;
 			int row = args.Y / this.fieldSize - 1;
 			if (row > 7 || row < 0 || col > 7 || col < 0) return;
-			if(this.MovePiece == true)
+			if (this.MovePiece == true)
 			{
+				if (this.positions[this.currentPosition].GetPiece(row, col) == " " && this.colMovedPiece == -1)
+				{
+					return;
+				}
 				// select
-				if(this.colMovedPiece == -1)
+				if (this.colMovedPiece == -1)
 				{
 					this.colMovedPiece = col;
 					this.rowMovedPiece = row;
