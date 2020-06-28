@@ -2,6 +2,12 @@
 Diagram Builder, standalone version. This version is .Net Framework dependent.
 
 # Versions history
+## 1.0.2
+Two versions, .Net Core and .Net Framework. Fix some bugs. Implemented functionality:
+ - "on top" option
+ - default options
+ - init / clear position toolbar buttons
+
 ## 1.0.1
 Two versions, .Net Core and .Net Framework. Fix some bugs. Implemented functionality:
  - open / save fen files
