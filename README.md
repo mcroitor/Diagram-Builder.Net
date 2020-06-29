@@ -1,4 +1,7 @@
 # Diagram-Builder.Net
+
+[русская версия](README.RU.md)
+
 Diagram Builder, standalone version. This version is .Net Framework dependent.
 
 # Versions history
@@ -18,13 +21,13 @@ Two versions, .Net Core and .Net Framework. Fix some bugs. Implemented functiona
 .Net Core version. Very first version with many bugs. Can set position, can export to image.
 
 # Known bugs
- - up / down key doesnt lists positions
+ [-] up / down key doesnt lists positions
  
 # TO DO
- - extend toolbar
- - implement change / save deafult options
- - highlight piece moved on board
- - import pgn format
- - import olv format
- - export to JPEG, TIFF
- - "Always on top" option
+ [#] extend toolbar
+ [+] implement change / save deafult options
+ [-] highlight piece moved on board
+ [-] import pgn format
+ [-] import olv format
+ [-] export to JPEG, TIFF
+ [+] "Always on top" option
