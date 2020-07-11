@@ -68,6 +68,9 @@ namespace DiagramBuilder.Net
 				exportAllFileMenuItem.Click += ExportAllFileMenuItem_Click;
 				exportAllFileMenuItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.A;
 				fileMenuItem.DropDownItems.Add(exportAllFileMenuItem);
+				//var exportAllToBase64FileMenuItem = new ToolStripMenuItem("Export Base64");
+				//exportAllToBase64FileMenuItem.Click += ExportAllToBase64FileMenuItem_Click; ;
+				//fileMenuItem.DropDownItems.Add(exportAllToBase64FileMenuItem);
 				fileMenuItem.DropDownItems.Add("-");
 				var exitFileMenuItem = new ToolStripMenuItem("Exit");
 				exitFileMenuItem.Click += ExitFileMenuItem_Click;
@@ -317,7 +320,7 @@ namespace DiagramBuilder.Net
 			this.boardView.MouseClick += SetPiece;
 
 			this.fontSelect = new ComboBox();
-			this.fontSelect.Items.AddRange(new string[] { "Chess Alpha 2", "Chess Berlin", "Chess Cases", "Chess Kingdom", "Chess Merida" });
+			this.fontSelect.Items.AddRange(new string[] { "Chess Alpha 2", "Chess Berlin", "Chess Cases", "Chess Condal", "Chess Kingdom", "Chess Leipzig", "Chess Merida" });
 			this.fontSelect.Location = new Point(10, 550);
 			this.fontSelect.SelectedIndex = 0;
 			this.fontSelect.Width = 200;
@@ -326,11 +329,7 @@ namespace DiagramBuilder.Net
 			this.Controls.Add(this.fontSelect);
 
 			this.fontSize = new NumericUpDown();
-			this.fontSize.Value = new decimal(new int[] {
-			this.selectedSize,
-			0,
-			0,
-			0});
+			this.fontSize.Value = new decimal(new int[] {this.selectedSize, 0, 0, 0});
 			this.fontSize.Location = new Point(220, 550);
 			this.fontSize.Width = 200;
 			this.fontSize.ValueChanged += FontSize_ValueChanged;
@@ -343,7 +342,7 @@ namespace DiagramBuilder.Net
 			this.fensList.GridLines = true;
 			this.fensList.FullRowSelect = true;
 			this.fensList.Width = 360;
-			this.fensList.Height = 580;
+			this.fensList.Height = 550;
 			this.fensList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left;
 			this.AutoScroll = true;
 			this.AutoSizeMode = AutoSizeMode.GrowOnly;
@@ -358,7 +357,34 @@ namespace DiagramBuilder.Net
 			this.Controls.Add(this.panel);
 			//this.Controls.Add(this.fen);
 			this.Controls.Add(this.fensList);
+
 			this.UpdateView();
+		}
+
+		private void ExportAllToBase64FileMenuItem_Click(object sender, EventArgs e)
+		{
+			string outputName = (this.fileName == "") ? "output.base64" : Path.GetFileName(this.fileName).Split('.')[0] + "_output.base64";
+			StreamWriter writer = new StreamWriter(this.outputDir + outputName);
+			var aFont = new Font(new FontFamily(this.selectedFont), this.selectedSize, GraphicsUnit.Pixel);
+
+			for (int i = 0; i < positions.Count; ++i)
+			{
+				Bitmap diagram = new Bitmap((int)(10.5 * this.selectedSize), (int)(10 * this.selectedSize), PixelFormat.Format24bppRgb);
+				diagram.SetResolution(this.dpi, this.dpi);
+
+				Graphics g = Graphics.FromImage(diagram);
+				g.FillRectangle(Brushes.White, 0, 0, diagram.Width, diagram.Height);
+				g.DrawString(this.positions[i].ToView(fonts[this.selectedFont]), aFont, Brushes.Black, 0, 0);
+
+				using (MemoryStream memoryStream = new MemoryStream())
+				{
+					diagram.Save(memoryStream, ImageFormat.Png);
+					writer.WriteLine(System.Convert.ToBase64String(memoryStream.ToArray()) + "\n");
+				}
+			}
+			writer.Close();
+
+			MessageBox.Show("Export done");
 		}
 
 		private void PinAppEditMenuItem_Click(object sender, EventArgs e)
@@ -401,7 +427,7 @@ namespace DiagramBuilder.Net
 		{
 			this.selectedFont = ((ComboBox)(sender)).SelectedItem.ToString();
 			this.boardView.Font = new System.Drawing.Font(new FontFamily(this.selectedFont), this.fieldSize, GraphicsUnit.Pixel);
-			this.UpdateView();
+			this.UpdateBoard();
 		}
 
 		private void FontSize_ValueChanged(object sender, EventArgs e)
@@ -465,6 +491,8 @@ namespace DiagramBuilder.Net
 		private void ExportAllFileMenuItem_Click(object sender, EventArgs e)
 		{
 			string format = new string('0', this.NrOfDigits(positions.Count));
+			string prefix = (this.fileName == "") ? "" : Path.GetFileName(this.fileName).Split('.')[0] + "_";
+
 			var aFont = new Font(new FontFamily(this.selectedFont), this.selectedSize, GraphicsUnit.Pixel);
 
 			for (int i = 0; i < positions.Count; ++i)
@@ -475,7 +503,7 @@ namespace DiagramBuilder.Net
 				Graphics g = Graphics.FromImage(diagram);
 				g.FillRectangle(Brushes.White, 0, 0, diagram.Width, diagram.Height);
 				g.DrawString(this.positions[i].ToView(fonts[this.selectedFont]), aFont, Brushes.Black, 0, 0);
-				diagram.Save(this.outputDir + "diagram" + (i + 1).ToString(format) + ".png", ImageFormat.Png);
+				diagram.Save(this.outputDir + prefix + "diagram" + (i + 1).ToString(format) + ".png", ImageFormat.Png);
 			}
 
 			MessageBox.Show("Export done");
@@ -502,7 +530,7 @@ namespace DiagramBuilder.Net
 				return;
 			}
 			this.currentPosition = ((ListView)sender).SelectedIndices[0];
-			this.UpdateView();
+			this.UpdateBoard();
 		}
 
 		private void ExitFileMenuItem_Click(object sender, EventArgs e)
@@ -562,7 +590,12 @@ namespace DiagramBuilder.Net
 
 		private void UpdateView()
 		{
-			this.boardView.Text = this.positions[this.currentPosition].ToView(this.fonts[this.selectedFont]);
+			this.UpdateBoard();
+			this.UpdateFenList();
+		}
+
+		private void UpdateFenList()
+		{
 			this.fensList.Items.Clear();
 			for (int i = 0; i < this.positions.Count; ++i)
 			{
@@ -570,6 +603,11 @@ namespace DiagramBuilder.Net
 			}
 			this.fensList.Items[this.currentPosition].Selected = true;
 			this.fensList.Select();
+		}
+
+		private void UpdateBoard()
+		{
+			this.boardView.Text = this.positions[this.currentPosition].ToView(this.fonts[this.selectedFont]);
 		}
 
 		private void NewFileMenuItem_Click(object sender, EventArgs e)

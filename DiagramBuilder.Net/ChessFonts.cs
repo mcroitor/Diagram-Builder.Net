@@ -171,6 +171,80 @@ namespace DiagramBuilder.Net
 				{"p1", "O"}
 			});
 
+		public static ChessFont Condal = new ChessFont("Chess Condal", new Dictionary<string, string>
+			{
+				{"TOP", "A\"\"\"\"\"\"\"\"S" },
+				{"LEFT", "$" },
+				{"RIGHT", "%" },
+				{"BOTTOM", "D((((((((F" },
+				{"LIGHT", " " },
+				{"DARK", "+" },
+				{"K0", "k"},
+				{"Q0", "q"},
+				{"R0", "r"},
+				{"B0", "b"},
+				{"N0", "n"},
+				{"P0", "p"},
+
+				{"K1", "K"},
+				{"Q1", "Q"},
+				{"R1", "R"},
+				{"B1", "B"},
+				{"N1", "N"},
+				{"P1", "P"},
+
+				{"k0", "l"},
+				{"q0", "w"},
+				{"r0", "t"},
+				{"b0", "v"},
+				{"n0", "m"},
+				{"p0", "o"},
+
+				{"k1", "L"},
+				{"q1", "W"},
+				{"r1", "T"},
+				{"b1", "V"},
+				{"n1", "M"},
+				{"p1", "O"}
+			});
+
+		public static ChessFont Leipzig = new ChessFont("Chess Leipzig", new Dictionary<string, string>
+			{
+				{"TOP", "A\"\"\"\"\"\"\"\"S" },
+				{"LEFT", "$" },
+				{"RIGHT", "%" },
+				{"BOTTOM", "D((((((((F" },
+				{"LIGHT", " " },
+				{"DARK", "+" },
+				{"K0", "k"},
+				{"Q0", "q"},
+				{"R0", "r"},
+				{"B0", "b"},
+				{"N0", "n"},
+				{"P0", "p"},
+
+				{"K1", "K"},
+				{"Q1", "Q"},
+				{"R1", "R"},
+				{"B1", "B"},
+				{"N1", "N"},
+				{"P1", "P"},
+
+				{"k0", "l"},
+				{"q0", "w"},
+				{"r0", "t"},
+				{"b0", "v"},
+				{"n0", "m"},
+				{"p0", "o"},
+
+				{"k1", "L"},
+				{"q1", "W"},
+				{"r1", "T"},
+				{"b1", "V"},
+				{"n1", "M"},
+				{"p1", "O"}
+			});
+
 		public static ChessFont Merida = new ChessFont("Chess Merida", new Dictionary<string, string>
 			{
 				{"TOP", "A\"\"\"\"\"\"\"\"S" },

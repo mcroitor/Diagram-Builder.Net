@@ -122,6 +122,8 @@ namespace Diagram_Builder.Net
             "Chess Alpha 2",
             "Chess Berlin",
             "Chess Cases",
+            "Chess Condal",
+            "Chess Hastings",
             "Chess Kingdom",
             "Chess Merida"});
 			this.fonts.Location = new System.Drawing.Point(160, 18);

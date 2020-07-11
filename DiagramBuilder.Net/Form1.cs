@@ -20,8 +20,10 @@ namespace DiagramBuilder.Net
 		private Dictionary<string, ChessFonts.ChessFont> fonts = new Dictionary<string, ChessFonts.ChessFont>
 		{
 			{"Chess Alpha 2", ChessFonts.Alpha},
-			{"Chess Berlin", ChessFonts.Berlin}, 
-			{"Chess Cases", ChessFonts.Cases}, 
+			{"Chess Berlin", ChessFonts.Berlin},
+			{"Chess Cases", ChessFonts.Cases},
+			{"Chess Condal", ChessFonts.Condal},
+			{"Chess Leipzig", ChessFonts.Leipzig},
 			{"Chess Kingdom", ChessFonts.Kingdom},
 			{"Chess Merida", ChessFonts.Merida}
 		};
