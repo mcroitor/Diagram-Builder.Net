@@ -134,16 +134,16 @@ namespace DiagramBuilder.Net
 				removePositionToolStripButton.Click += RemoveEditMenuItem_Click;
 				toolbar.Items.Add(removePositionToolStripButton);
 			}
-			{
-				var clearPositionToolStripButton = new ToolStripButton(Image.FromFile(".\\images\\clear.png"));
-				clearPositionToolStripButton.Click += ClearBoardEditMenuItem_Click;
-				toolbar.Items.Add(clearPositionToolStripButton);
-			}
-			{
-				var initPositionToolStripButton = new ToolStripButton(Image.FromFile(".\\images\\init.png"));
-				initPositionToolStripButton.Click += InitBoardEditMenuItem_Click;
-				toolbar.Items.Add(initPositionToolStripButton);
-			}
+			//{
+			//	var clearPositionToolStripButton = new ToolStripButton(Image.FromFile(".\\images\\clear.png"));
+			//	clearPositionToolStripButton.Click += ClearBoardEditMenuItem_Click;
+			//	toolbar.Items.Add(clearPositionToolStripButton);
+			//}
+			//{
+			//	var initPositionToolStripButton = new ToolStripButton(Image.FromFile(".\\images\\init.png"));
+			//	initPositionToolStripButton.Click += InitBoardEditMenuItem_Click;
+			//	toolbar.Items.Add(initPositionToolStripButton);
+			//}
 			{
 				var pinAppToolStripButton = new ToolStripButton(Image.FromFile(".\\images\\pin.png"));
 				pinAppToolStripButton.Click += PinAppEditMenuItem_Click;
@@ -306,6 +306,27 @@ namespace DiagramBuilder.Net
 				move.Name = " ";
 				move.Click += PieceMove;
 				this.panel.Controls.Add(move);
+
+				{
+					var initPosition = new Button();
+					initPosition.Location = new System.Drawing.Point(7 * this.fieldSize, 0);
+					initPosition.Width = this.fieldSize;
+					initPosition.Height = this.fieldSize;
+					var initPositionImage = Image.FromFile(".\\images\\init.png");
+					initPosition.Image = initPositionImage;
+					initPosition.Click += InitBoardEditMenuItem_Click;
+					panel.Controls.Add(initPosition);
+				}
+				{
+					var clearPosition = new Button();
+					clearPosition.Location = new System.Drawing.Point(7 * this.fieldSize, this.fieldSize);
+					clearPosition.Width = this.fieldSize;
+					clearPosition.Height = this.fieldSize;
+					var clearPositionImage = Image.FromFile(".\\images\\clear.png");
+					clearPosition.Image = clearPositionImage;
+					clearPosition.Click += ClearBoardEditMenuItem_Click;
+					panel.Controls.Add(clearPosition);
+				}
 			}
 
 			this.boardView = new System.Windows.Forms.Label();
@@ -558,10 +579,15 @@ namespace DiagramBuilder.Net
 			// Open SaveFileDialog
 			SaveFileDialog saveFileDialog = new SaveFileDialog();
 			saveFileDialog.Filter = "epd|*.epd|fen|*.fen|All files|*.*";
+			if(this.fileName.Equals("") == false)
+			{
+				saveFileDialog.FileName = this.fileName;
+			}
 			if (saveFileDialog.ShowDialog() == DialogResult.OK)
 			{
 				fileName = saveFileDialog.FileName;
 			}
+			this.Text = "DiagramBuilder.Net : " + Path.GetFileName(this.fileName);
 			SavePositions();
 		}
 
@@ -584,6 +610,7 @@ namespace DiagramBuilder.Net
 					this.positions.Add(board);
 				}
 				reader.Close();
+				this.Text = "DiagramBuilder.Net : " + Path.GetFileName(this.fileName);
 				this.UpdateView();
 			}
 		}
@@ -616,6 +643,8 @@ namespace DiagramBuilder.Net
 			this.positions.Clear();
 			this.positions.Add(ChessBoard.Empty());
 			this.currentPosition = 0;
+			this.Text = "DiagramBuilder.Net";
+			UpdateView();
 		}
 
 		private void PieceClicked(object sender, EventArgs e)
