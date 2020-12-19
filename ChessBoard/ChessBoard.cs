@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DiagramBuilder.Net
+﻿namespace Chess
 {
 	public class ChessBoard
 	{
@@ -90,7 +86,7 @@ namespace DiagramBuilder.Net
 			for (int row = 0; row < 8; ++row)
 			{
 				int countEmpty = 0;
-				for (int column = 7; column >=0; --column)
+				for (int column = 7; column >= 0; --column)
 				{
 					if (brd[column, row] == " ")
 					{
@@ -119,7 +115,7 @@ namespace DiagramBuilder.Net
 			return fen;
 		}
 
-		public string ToView(ChessFonts.ChessFont font)
+		public string ToView(ChessFont font)
 		{
 			string view = font.GetPiece("TOP") + "\n";
 			for (int row = 0; row < 8; ++row)

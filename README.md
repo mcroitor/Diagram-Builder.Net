@@ -5,6 +5,9 @@
 Diagram Builder, standalone version. This version is .Net Framework dependent.
 
 # Versions history
+## 2.0.0
+Refactoring. Extracted ChessFont and ChessBoard classes in libraries. Created console utility for fen to png image conversion.
+
 ## 1.0.3
  - fixed bug with up / down keys
  - export name of images contains epd file name

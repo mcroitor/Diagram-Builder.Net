@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Drawing.Text;
 using System.Windows.Forms;
+using Chess;
 
 namespace DiagramBuilder.Net
 {
@@ -17,15 +18,15 @@ namespace DiagramBuilder.Net
 
 		// structures
 		PrivateFontCollection chessFontsCollection;
-		private Dictionary<string, ChessFonts.ChessFont> fonts = new Dictionary<string, ChessFonts.ChessFont>
+		private Dictionary<string, ChessFont> fonts = new Dictionary<string, ChessFont>
 		{
-			{"Chess Alpha 2", ChessFonts.Alpha},
-			{"Chess Berlin", ChessFonts.Berlin},
-			{"Chess Cases", ChessFonts.Cases},
-			{"Chess Condal", ChessFonts.Condal},
-			{"Chess Leipzig", ChessFonts.Leipzig},
-			{"Chess Kingdom", ChessFonts.Kingdom},
-			{"Chess Merida", ChessFonts.Merida}
+			{"Chess Alpha 2", new ChessFont("fonts\\mapping\\alpha2.map")},
+			{"Chess Berlin", new ChessFont("fonts\\mapping\\berlin.map")},
+			{"Chess Cases", new ChessFont("fonts\\mapping\\cases.map")},
+			{"Chess Condal", new ChessFont("fonts\\mapping\\condal.map")},
+			{"Chess Kingdom", new ChessFont("fonts\\mapping\\kingdom.map")},
+			{"Chess Leipzig", new ChessFont("fonts\\mapping\\leipzig.map")},
+			{"Chess Merida", new ChessFont("fonts\\mapping\\merida.map")}
 		};
 		int fieldSize = 40;
 		List<ChessBoard> positions;

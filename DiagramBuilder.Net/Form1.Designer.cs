@@ -1,4 +1,5 @@
-﻿using Diagram_Builder.Net;
+﻿using Chess;
+using Diagram_Builder.Net;
 using System;
 using System.Configuration;
 using System.Drawing;
