@@ -56,6 +56,9 @@ namespace DiagramBuilder.Net
 				openFileMenuItem.Click += OpenFileMenuItem_Click;
 				openFileMenuItem.ShortcutKeys = Keys.Control | Keys.O;
 				fileMenuItem.DropDownItems.Add(openFileMenuItem);
+				this.recentFileMenuItem = new ToolStripMenuItem("Recent");
+				this.recentFileMenuItem.DropDownItems.AddRange(this.GetRecentFiles());
+				fileMenuItem.DropDownItems.Add(this.recentFileMenuItem);
 				var saveFileMenuItem = new ToolStripMenuItem("Save");
 				saveFileMenuItem.Click += SaveFileMenuItem_Click;
 				saveFileMenuItem.ShortcutKeys = Keys.Control | Keys.S;
@@ -106,7 +109,7 @@ namespace DiagramBuilder.Net
 				clearBoardEditMenuItem.Click += ClearBoardEditMenuItem_Click;
 				clearBoardEditMenuItem.ShortcutKeys = Keys.Control | Keys.Alt | Keys.C;
 				editMenuItem.DropDownItems.Add(clearBoardEditMenuItem);
-				editMenuItem.DropDownItems.Add("-"); 
+				editMenuItem.DropDownItems.Add("-");
 				var pinAppEditMenuItem = new ToolStripMenuItem("Always on top");
 				pinAppEditMenuItem.Click += PinAppEditMenuItem_Click;
 				pinAppEditMenuItem.ShortcutKeys = Keys.Control | Keys.Alt | Keys.P;
@@ -351,7 +354,7 @@ namespace DiagramBuilder.Net
 			this.Controls.Add(this.fontSelect);
 
 			this.fontSize = new NumericUpDown();
-			this.fontSize.Value = new decimal(new int[] {this.selectedSize, 0, 0, 0});
+			this.fontSize.Value = new decimal(new int[] { this.selectedSize, 0, 0, 0 });
 			this.fontSize.Location = new Point(220, 550);
 			this.fontSize.Width = 200;
 			this.fontSize.ValueChanged += FontSize_ValueChanged;
@@ -363,7 +366,7 @@ namespace DiagramBuilder.Net
 			this.fensList.View = View.Details;
 			this.fensList.GridLines = true;
 			this.fensList.FullRowSelect = true;
-			this.fensList.Width = 360;
+			this.fensList.Width = 600;
 			this.fensList.Height = 550;
 			this.fensList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left;
 			this.AutoScroll = true;
@@ -371,9 +374,12 @@ namespace DiagramBuilder.Net
 			this.fensList.Enabled = true;
 			this.fensList.BorderStyle = BorderStyle.FixedSingle;
 			this.fensList.Columns.Add("positions");
+			this.fensList.Columns.Add("comment");
 			this.fensList.Columns[0].Width = 300;
+			this.fensList.Columns[1].Width = 300;
 			this.fensList.MultiSelect = false;
 			this.fensList.SelectedIndexChanged += FensListSelectIndex;
+			this.fensList.MouseDoubleClick += UpdateFenEntry;
 
 			this.Controls.Add(this.boardView);
 			this.Controls.Add(this.panel);
@@ -381,6 +387,23 @@ namespace DiagramBuilder.Net
 			this.Controls.Add(this.fensList);
 
 			this.UpdateView();
+		}
+
+		private void UpdateFenEntry(object sender, MouseEventArgs e)
+		{
+			var selectedItem = this.fensList.SelectedItems[0];
+			var fenDescriptionForm = new FenDescriptionForm();
+			fenDescriptionForm.fen.Text = selectedItem.Text;
+			fenDescriptionForm.comment.Text = selectedItem.SubItems[1].Text;
+
+			var tmp = this.TopMost;
+			this.TopMost = false;
+			if(fenDescriptionForm.ShowDialog() == DialogResult.OK)
+			{
+				selectedItem.Text = fenDescriptionForm.fen.Text;
+				selectedItem.SubItems[1].Text = fenDescriptionForm.comment.Text;
+			}
+			this.TopMost = tmp;
 		}
 
 		private void ExportAllToBase64FileMenuItem_Click(object sender, EventArgs e)
@@ -499,6 +522,7 @@ namespace DiagramBuilder.Net
 			var settings = configFile.AppSettings.Settings;
 			var optionsForm = new OptionsForm(settings);
 
+			var tmp = this.TopMost;
 			this.TopMost = false;
 
 			if (optionsForm.ShowDialog() == DialogResult.OK)
@@ -507,7 +531,7 @@ namespace DiagramBuilder.Net
 				configFile.Save(ConfigurationSaveMode.Modified);
 				ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
 			}
-			this.TopMost = alwaysOnTop;
+			this.TopMost = tmp;
 		}
 
 		private void ExportAllFileMenuItem_Click(object sender, EventArgs e)
@@ -570,7 +594,7 @@ namespace DiagramBuilder.Net
 			StreamWriter writer = new StreamWriter(fileName);
 			foreach (ChessBoard board in this.positions)
 			{
-				writer.Write(board.ToFen() + "\n");
+				writer.Write(board.ToFen() + " ; " + board.comment + "\n");
 			}
 			writer.Close();
 		}
@@ -580,7 +604,7 @@ namespace DiagramBuilder.Net
 			// Open SaveFileDialog
 			SaveFileDialog saveFileDialog = new SaveFileDialog();
 			saveFileDialog.Filter = "epd|*.epd|fen|*.fen|All files|*.*";
-			if(this.fileName.Equals("") == false)
+			if (this.fileName.Equals("") == false)
 			{
 				saveFileDialog.FileName = this.fileName;
 			}
@@ -600,20 +624,67 @@ namespace DiagramBuilder.Net
 			if (openFileDialog.ShowDialog() == DialogResult.OK)
 			{
 				this.fileName = openFileDialog.FileName;
-				this.positions.Clear();
-				this.currentPosition = 0;
-				StreamReader reader = new StreamReader(this.fileName);
-				while (reader.EndOfStream == false)
-				{
-					string line = reader.ReadLine();
-					ChessBoard board = ChessBoard.Empty();
-					board.SetBoard(line);
-					this.positions.Add(board);
-				}
-				reader.Close();
-				this.Text = "DiagramBuilder.Net : " + Path.GetFileName(this.fileName);
-				this.UpdateView();
+
+				this.OpenFile(sender, e);
+
+				this.recentFileMenuItem.DropDownItems.Clear();
+				this.recentFileMenuItem.DropDownItems.AddRange(this.GetRecentFiles());
 			}
+		}
+
+		private void ReopenFile(Object sender, EventArgs e)
+		{
+			var menuItem = (ToolStripMenuItem)sender;
+			this.fileName = menuItem.Name;
+
+			this.OpenFile(sender, e);
+
+			
+			this.recentFileMenuItem.DropDownItems.Clear();
+			this.recentFileMenuItem.DropDownItems.AddRange(this.GetRecentFiles());
+			//this.recentFileMenuItem;
+
+		}
+
+
+
+		private void OpenFile(Object sender, EventArgs e)
+		{
+			this.positions.Clear();
+			this.currentPosition = 0;
+			StreamReader reader = new StreamReader(this.fileName);
+			while (reader.EndOfStream == false)
+			{
+				string line = reader.ReadLine();
+				char[] separators = new char[] { ';', '#' };
+				string[] tmp = line.Split(separators, 2);
+				ChessBoard board = ChessBoard.Empty();
+				board.SetBoard(tmp[0].Trim());
+				if (tmp.Length > 1)
+				{
+					board.comment = tmp[1].Trim();
+				}
+
+				this.positions.Add(board);
+			}
+			reader.Close();
+			this.Text = "DiagramBuilder.Net : " + Path.GetFileName(this.fileName);
+
+			// recent files update
+			var recent = new System.Collections.Generic.List<string>(System.IO.File.ReadLines(this.recentFiles));
+
+			while (recent.Count >= 10)
+			{
+				recent.RemoveAt(recent.Count - 1);
+			}
+
+			recent.RemoveAll(p => p.Equals(this.fileName));
+
+			recent.Insert(0, this.fileName);
+			System.IO.File.WriteAllLines(this.recentFiles, recent);
+
+			// update view
+			this.UpdateView();
 		}
 
 		private void UpdateView()
@@ -627,7 +698,7 @@ namespace DiagramBuilder.Net
 			this.fensList.Items.Clear();
 			for (int i = 0; i < this.positions.Count; ++i)
 			{
-				this.fensList.Items.Add(this.positions[i].ToFen());
+				this.fensList.Items.Add(this.positions[i].ToFen()).SubItems.Add(this.positions[i].comment);
 			}
 			this.fensList.Items[this.currentPosition].Selected = true;
 			this.fensList.Select();
@@ -646,6 +717,22 @@ namespace DiagramBuilder.Net
 			this.currentPosition = 0;
 			this.Text = "DiagramBuilder.Net";
 			UpdateView();
+		}
+
+		private ToolStripItem[] GetRecentFiles()
+		{
+			var result = new System.Collections.ArrayList();
+
+			foreach(var line in System.IO.File.ReadLines(this.recentFiles))
+			{
+				var fileName1 = Path.GetFileName(line);
+				var item = new ToolStripMenuItem(fileName1);
+				item.Name = line;
+				item.Click += this.ReopenFile;
+				result.Add(item);
+			}
+
+			return result.ToArray(typeof(ToolStripMenuItem)) as ToolStripMenuItem[];
 		}
 
 		private void PieceClicked(object sender, EventArgs e)

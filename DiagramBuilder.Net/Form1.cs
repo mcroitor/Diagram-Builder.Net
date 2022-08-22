@@ -15,6 +15,7 @@ namespace DiagramBuilder.Net
 		private ComboBox fontSelect;
 		private NumericUpDown fontSize;
 		private Panel panel;
+		private ToolStripMenuItem recentFileMenuItem;
 
 		// structures
 		PrivateFontCollection chessFontsCollection;
@@ -37,6 +38,7 @@ namespace DiagramBuilder.Net
 		bool MovePiece = false;
 		int colMovedPiece = -1;
 		int rowMovedPiece = -1;
+		string recentFiles = ".\\recent.ini";
 		// image properties
 		int dpi = 300;
 
@@ -66,6 +68,10 @@ namespace DiagramBuilder.Net
 			positions = new List<ChessBoard>();
 			this.positions.Add(ChessBoard.Empty());
 			this.fileName = "";
+			if (!System.IO.File.Exists(this.recentFiles))
+			{
+				System.IO.File.Create(this.recentFiles);
+			}
 
 			CheckIntegrity();
 			InitializeFonts();

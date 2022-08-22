@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Diagram_Builder.Net
 {
-	public partial class OptionsForm : System.Windows.Forms.Form
+	public partial class OptionsForm : Form
 	{
 		public KeyValueConfigurationCollection defaultOptions;
 		public OptionsForm(KeyValueConfigurationCollection options)

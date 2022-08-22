@@ -1,8 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Chess;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ChessFonts.Tests
 {

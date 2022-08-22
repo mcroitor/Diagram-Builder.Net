@@ -43,6 +43,7 @@
 		};
 
 		private string[,] brd;
+		public string comment { get; set; }
 		public ChessBoard()
 		{
 			brd = new string[8, 8];
@@ -53,6 +54,7 @@
 					brd[i, j] = " ";
 				}
 			}
+			comment = "";
 		}
 
 		public static ChessBoard Empty()
@@ -186,5 +188,6 @@
 		{
 			return brd[rowMovedPiece, colMovedPiece];
 		}
+
 	}
 }
