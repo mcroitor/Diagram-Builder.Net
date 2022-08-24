@@ -19,6 +19,19 @@ namespace Diagram_Builder.Net
 			this.cropImage.Checked = bool.Parse(defaultOptions["CropImage"].Value);
 		}
 
+		public string[] LoadFonts()
+		{
+			var mapping = "fonts\\mapping\\";
+			var mapped_fonts = System.IO.Directory.GetFiles(mapping, "*.map");
+			string[] result = new string[mapped_fonts.Length];
+			for (int i = 0; i < mapped_fonts.Length; ++i)
+			{
+				Chess.ChessFont font = new Chess.ChessFont(mapped_fonts[i]);
+				result[i] = font.GetID();
+			}
+			return result;
+		}
+
 		private void button1_Click(object sender, EventArgs e)
 		{
 			try

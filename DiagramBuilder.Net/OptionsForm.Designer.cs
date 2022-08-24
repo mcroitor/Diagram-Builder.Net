@@ -119,14 +119,7 @@ namespace Diagram_Builder.Net
 			// fonts
 			// 
 			this.fonts.FormattingEnabled = true;
-			this.fonts.Items.AddRange(new object[] {
-            "Chess Alpha 2",
-            "Chess Berlin",
-            "Chess Cases",
-            "Chess Condal",
-            "Chess Hastings",
-            "Chess Kingdom",
-            "Chess Merida"});
+			this.fonts.Items.AddRange(LoadFonts());
 			this.fonts.Location = new System.Drawing.Point(202, 18);
 			this.fonts.Name = "fonts";
 			this.fonts.Size = new System.Drawing.Size(150, 24);
