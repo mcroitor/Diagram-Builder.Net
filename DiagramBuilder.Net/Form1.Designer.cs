@@ -542,7 +542,8 @@ namespace DiagramBuilder.Net
 			string format = new string('0', this.NrOfDigits(positions.Count));
 			string prefix = (this.fileName == "") ? "" : Path.GetFileName(this.fileName).Split('.')[0] + "_";
 
-			var aFont = new Font(new FontFamily(this.selectedFont), this.selectedSize, GraphicsUnit.Pixel);
+			var font_name = this.fonts[this.selectedFont].GetName();
+			var aFont = new Font(new FontFamily(font_name), this.selectedSize, GraphicsUnit.Pixel);
 
 			for (int i = 0; i < positions.Count; ++i)
 			{
