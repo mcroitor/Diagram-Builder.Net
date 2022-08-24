@@ -5,6 +5,11 @@
 Diagram Builder, standalone version. This version is .Net Framework dependent.
 
 # Versions history
+
+## 2.0.1
+ - Menu File --> Recent was added. It memorize 10 last opened files.
+ - Loadinf chess fonts by maps. Font maps are defined in the `fonts/mapping` folder.
+
 ## 2.0.0
 Refactoring. Extracted ChessFont and ChessBoard classes in libraries. Created console utility for fen to png image conversion.
 
@@ -33,7 +38,7 @@ Two versions, .Net Core and .Net Framework. Fix some bugs. Implemented functiona
  
 # TO DO
  - [#] extend toolbar
- - [+] implement change / save deafult options
+ - [+] implement change / save default options
  - [-] highlight piece moved on board
  - [-] import pgn format
  - [-] import olv format
