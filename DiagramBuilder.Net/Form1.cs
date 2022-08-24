@@ -18,17 +18,8 @@ namespace DiagramBuilder.Net
 		private ToolStripMenuItem recentFileMenuItem;
 
 		// structures
-		PrivateFontCollection chessFontsCollection;
-		private Dictionary<string, ChessFont> fonts = new Dictionary<string, ChessFont>
-		{
-			{"Chess Alpha 2", new ChessFont("fonts\\mapping\\alpha2.map")},
-			{"Chess Berlin", new ChessFont("fonts\\mapping\\berlin.map")},
-			{"Chess Cases", new ChessFont("fonts\\mapping\\cases.map")},
-			{"Chess Condal", new ChessFont("fonts\\mapping\\condal.map")},
-			{"Chess Kingdom", new ChessFont("fonts\\mapping\\kingdom.map")},
-			{"Chess Leipzig", new ChessFont("fonts\\mapping\\leipzig.map")},
-			{"Chess Merida", new ChessFont("fonts\\mapping\\merida.map")}
-		};
+		PrivateFontCollection chessFontsCollection = new PrivateFontCollection();
+		private Dictionary<string, ChessFont> fonts = new Dictionary<string, ChessFont>();
 		int fieldSize = 40;
 		List<ChessBoard> positions;
 		int currentPosition;
@@ -52,8 +43,11 @@ namespace DiagramBuilder.Net
 		public Form1()
 		{
 			currentPosition = 0;
-			// selectedFont = "Chess Alpha 2";
-			selectedFont = ConfigurationManager.AppSettings["DefaultFont"] ?? "Chess Alpha 2";
+			LoadFonts();
+			var e = this.fonts.GetEnumerator();
+			e.MoveNext();
+			selectedFont = ConfigurationManager.AppSettings["DefaultFont"] ?? 
+				e.Current.Value.GetID();
 			if(ConfigurationManager.AppSettings["DefaultSize"] != null)
 			{
 				selectedSize = int.Parse(ConfigurationManager.AppSettings["DefaultSize"]);
@@ -68,10 +62,6 @@ namespace DiagramBuilder.Net
 			positions = new List<ChessBoard>();
 			this.positions.Add(ChessBoard.Empty());
 			this.fileName = "";
-			if (!System.IO.File.Exists(this.recentFiles))
-			{
-				System.IO.File.Create(this.recentFiles);
-			}
 
 			CheckIntegrity();
 			InitializeFonts();
@@ -88,6 +78,22 @@ namespace DiagramBuilder.Net
 			if (System.IO.Directory.Exists(this.fontsDir) == false)
 			{
 				System.IO.Directory.CreateDirectory(this.fontsDir);
+			}
+			if (System.IO.File.Exists(this.recentFiles) == false)
+			{
+				System.IO.File.Create(this.recentFiles);
+			}
+
+		}
+
+		public void LoadFonts()
+		{
+			var mapping = this.fontsDir + "\\mapping";
+			var mapped_fonts = System.IO.Directory.GetFiles(mapping, "*.map");
+			foreach (var item in mapped_fonts)
+			{
+				var chess_font = new ChessFont(item);
+				this.fonts.Add(chess_font.GetID(), chess_font);
 			}
 		}
 

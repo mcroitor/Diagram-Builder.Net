@@ -345,7 +345,9 @@ namespace DiagramBuilder.Net
 			this.boardView.MouseClick += SetPiece;
 
 			this.fontSelect = new ComboBox();
-			this.fontSelect.Items.AddRange(new string[] { "Chess Alpha 2", "Chess Berlin", "Chess Cases", "Chess Condal", "Chess Kingdom", "Chess Leipzig", "Chess Merida" });
+			var elements = new string[this.fonts.Count];
+			this.fonts.Keys.CopyTo(elements, 0);
+			this.fontSelect.Items.AddRange(elements);
 			this.fontSelect.Location = new Point(10, 550);
 			this.fontSelect.SelectedIndex = 0;
 			this.fontSelect.Width = 200;
@@ -471,7 +473,8 @@ namespace DiagramBuilder.Net
 		private void FontSelect_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			this.selectedFont = ((ComboBox)(sender)).SelectedItem.ToString();
-			this.boardView.Font = new System.Drawing.Font(new FontFamily(this.selectedFont), this.fieldSize, GraphicsUnit.Pixel);
+			var fontName = this.fonts[this.selectedFont].GetName();
+			this.boardView.Font = new System.Drawing.Font(new FontFamily(fontName), this.fieldSize, GraphicsUnit.Pixel);
 			this.UpdateBoard();
 		}
 

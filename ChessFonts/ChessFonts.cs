@@ -6,6 +6,7 @@ namespace Chess
 	public class ChessFont
 	{
 		private string Name;
+		private string FontID;
 		private Dictionary<string, string> Piece;
 
 		public ChessFont(string n, Dictionary<string, string> desc)
@@ -44,6 +45,11 @@ namespace Chess
 						{
 							Name = value;
 						}
+						// extract ID
+						if ("ID".Equals(key))
+						{
+							this.FontID = value;
+						}
 					}
 				}
 			}
@@ -53,6 +59,8 @@ namespace Chess
 		{
 			return this.Piece[ID];
 		}
+
+		public string GetID() { return this.FontID; }
 
 		public static ChessFont Alpha()
 		{

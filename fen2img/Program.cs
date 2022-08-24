@@ -190,7 +190,6 @@ namespace fen2img
 
             foreach (var keypair in args)
 			{
-                Console.WriteLine(keypair);
 				var tmp = keypair.Split('=');
 				var key = tmp[0].Trim().TrimStart('-');
 				var value = tmp[1].Trim();
@@ -198,7 +197,6 @@ namespace fen2img
 				{
 					keys[key] = value;
 				}
-                Console.WriteLine(key + " = " + value);
 			}
 
 			// input fen set
@@ -233,7 +231,7 @@ namespace fen2img
 
 							ChessFont font = new ChessFont("fonts\\mapping\\" + keys["font"] + ".map");
 							Bitmap bitmap = Fen2Image(board, font, int.Parse(keys["size"]));
-                            bitmap = CropImage(bitmap);
+                            // bitmap = CropImage(bitmap);
 							bitmap.Save(keys["folder"] + "\\diagram" + count + ".png", ImageFormat.Png);
 						}
 					}
