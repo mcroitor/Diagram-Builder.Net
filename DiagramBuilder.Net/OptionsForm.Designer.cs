@@ -41,6 +41,7 @@ namespace Diagram_Builder.Net
 			this.fonts = new System.Windows.Forms.ComboBox();
 			this.size = new System.Windows.Forms.NumericUpDown();
 			this.onTop = new System.Windows.Forms.CheckBox();
+			this.cropImage = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.size)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -103,14 +104,14 @@ namespace Diagram_Builder.Net
 			// 
 			// workDir
 			// 
-			this.workDir.Location = new System.Drawing.Point(160, 78);
+			this.workDir.Location = new System.Drawing.Point(202, 75);
 			this.workDir.Name = "workDir";
 			this.workDir.Size = new System.Drawing.Size(150, 22);
 			this.workDir.TabIndex = 8;
 			// 
 			// outputDir
 			// 
-			this.outputDir.Location = new System.Drawing.Point(160, 106);
+			this.outputDir.Location = new System.Drawing.Point(202, 103);
 			this.outputDir.Name = "outputDir";
 			this.outputDir.Size = new System.Drawing.Size(150, 22);
 			this.outputDir.TabIndex = 9;
@@ -126,14 +127,14 @@ namespace Diagram_Builder.Net
             "Chess Hastings",
             "Chess Kingdom",
             "Chess Merida"});
-			this.fonts.Location = new System.Drawing.Point(160, 18);
+			this.fonts.Location = new System.Drawing.Point(202, 18);
 			this.fonts.Name = "fonts";
 			this.fonts.Size = new System.Drawing.Size(150, 24);
 			this.fonts.TabIndex = 12;
 			// 
 			// size
 			// 
-			this.size.Location = new System.Drawing.Point(190, 50);
+			this.size.Location = new System.Drawing.Point(232, 47);
 			this.size.Name = "size";
 			this.size.Size = new System.Drawing.Size(120, 22);
 			this.size.TabIndex = 13;
@@ -147,16 +148,28 @@ namespace Diagram_Builder.Net
 			// 
 			this.onTop.AutoSize = true;
 			this.onTop.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.onTop.Location = new System.Drawing.Point(55, 134);
+			this.onTop.Location = new System.Drawing.Point(32, 134);
 			this.onTop.Name = "onTop";
 			this.onTop.Size = new System.Drawing.Size(122, 21);
 			this.onTop.TabIndex = 14;
 			this.onTop.Text = "Always on Top";
 			this.onTop.UseVisualStyleBackColor = true;
 			// 
+			// cropImage
+			// 
+			this.cropImage.AutoSize = true;
+			this.cropImage.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.cropImage.Location = new System.Drawing.Point(202, 134);
+			this.cropImage.Name = "cropImage";
+			this.cropImage.Size = new System.Drawing.Size(102, 21);
+			this.cropImage.TabIndex = 19;
+			this.cropImage.Text = "Crop Image";
+			this.cropImage.UseVisualStyleBackColor = true;
+			// 
 			// OptionsForm
 			// 
-			this.ClientSize = new System.Drawing.Size(322, 225);
+			this.ClientSize = new System.Drawing.Size(364, 225);
+			this.Controls.Add(this.cropImage);
 			this.Controls.Add(this.onTop);
 			this.Controls.Add(this.size);
 			this.Controls.Add(this.fonts);
@@ -189,5 +202,6 @@ namespace Diagram_Builder.Net
 		private System.Windows.Forms.ComboBox fonts;
 		private System.Windows.Forms.NumericUpDown size;
 		private System.Windows.Forms.CheckBox onTop;
+		private System.Windows.Forms.CheckBox cropImage;
 	}
 }

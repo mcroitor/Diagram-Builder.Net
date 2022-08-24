@@ -16,6 +16,7 @@ namespace Diagram_Builder.Net
 			this.onTop.Checked = bool.Parse(defaultOptions["OnTop"].Value);
 			this.workDir.Text = defaultOptions["WorkDir"].Value;
 			this.outputDir.Text = defaultOptions["OutputDir"].Value;
+			this.cropImage.Checked = bool.Parse(defaultOptions["CropImage"].Value);
 		}
 
 		private void button1_Click(object sender, EventArgs e)
@@ -62,7 +63,14 @@ namespace Diagram_Builder.Net
 				{
 					defaultOptions["OnTop"].Value = onTop.Checked.ToString();
 				}
-
+				if (defaultOptions["CropImage"] == null)
+				{
+					defaultOptions.Add("CropImage", onTop.Checked.ToString());
+				}
+				else
+				{
+					defaultOptions["CropImage"].Value = onTop.Checked.ToString();
+				}
 			}
 			catch (ConfigurationErrorsException)
 			{

@@ -36,6 +36,7 @@ namespace DiagramBuilder.Net
 		//configurable options
 		string selectedFont;
 		int selectedSize = 40;
+		bool cropImage = false;
 		string outputDir = ".\\output\\";
 		string workDir;
 		bool alwaysOnTop = false;
@@ -54,6 +55,11 @@ namespace DiagramBuilder.Net
 			}
 			outputDir = ConfigurationManager.AppSettings["OutputDir"] ?? ".\\output\\";
 			workDir = ConfigurationManager.AppSettings["WorkDir"] ?? ".\\fens\\";
+
+			if(ConfigurationManager.AppSettings["CropImage"] != null)
+			{
+				this.cropImage = bool.Parse(ConfigurationManager.AppSettings["CropImage"]);
+			}
 			if (ConfigurationManager.AppSettings["OnTop"] != null)
 			{
 				alwaysOnTop = bool.Parse(ConfigurationManager.AppSettings["OnTop"]);
