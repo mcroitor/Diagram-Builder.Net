@@ -15,6 +15,7 @@ namespace fen2img
 			Console.WriteLine("Usage:");
 			Console.WriteLine("\tfen2img --inputfen=<fen> [--font=<font>] [--size=<field size>] [--output=<filename>] ");
 			Console.WriteLine("\tfen2img --inputfile=<fenfile> [--font=<font>] [--size=<field size>] [--folder=<foldername>]");
+            Console.WriteLine("\tfen2img --mapped-fonts - will print list of mapped fonts");
             Console.WriteLine("Default values: font=alpha2, size=50, output=diagram, folder=.");
        }
 
@@ -147,6 +148,24 @@ namespace fen2img
 			return diagram;
 		}
 
+        static void PrintMappedFonts()
+		{
+            try
+            {
+                var maps = System.IO.Directory.GetFiles("fonts\\mapping\\", "*.map");
+                System.Console.WriteLine("available maps for fonts:");
+                foreach (var map in maps)
+                {
+                    System.Console.WriteLine("\t" + map.Replace(".map", "").Replace("fonts\\mapping\\", ""));
+                }
+            }
+            catch(Exception ex)
+			{
+                Console.WriteLine("oops!");
+                Console.WriteLine(ex);
+			}
+		}
+
 		static Dictionary<string, string> keys = new Dictionary<string, string>
 		{
 			{ "folder", ".\\"},
@@ -163,8 +182,15 @@ namespace fen2img
 				Info();
 				return;
 			}
-			foreach(var keypair in args)
+
+			if (Array.FindIndex(args, element => "--mapped-fonts".Equals(element)) > -1){
+                PrintMappedFonts();
+                return;
+            }
+
+            foreach (var keypair in args)
 			{
+                Console.WriteLine(keypair);
 				var tmp = keypair.Split('=');
 				var key = tmp[0].Trim().TrimStart('-');
 				var value = tmp[1].Trim();
@@ -172,7 +198,9 @@ namespace fen2img
 				{
 					keys[key] = value;
 				}
+                Console.WriteLine(key + " = " + value);
 			}
+
 			// input fen set
 			if(keys["inputfen"] != "") {
 				ChessBoard board = new ChessBoard();
