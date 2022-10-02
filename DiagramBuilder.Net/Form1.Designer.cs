@@ -570,6 +570,7 @@ namespace DiagramBuilder.Net
 		private void ExportFileMenuItem_Click(object sender, EventArgs e)
 		{
 			var font_name = this.fonts[this.selectedFont].GetName();
+			string format = new string('0', this.NrOfDigits(positions.Count));
 
 			var aFont = new Font(new FontFamily(font_name), this.selectedSize, GraphicsUnit.Pixel);
 
@@ -583,7 +584,7 @@ namespace DiagramBuilder.Net
 			{
 				diagram = CropImage(diagram);
 			}
-			diagram.Save(this.outputDir + "diagram.png", ImageFormat.Png);
+			diagram.Save(this.outputDir + "diagram" + this.currentPosition.ToString(format) + ".png", ImageFormat.Png);
 			MessageBox.Show("Export done");
 		}
 

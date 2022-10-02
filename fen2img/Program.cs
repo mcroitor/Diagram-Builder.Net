@@ -173,8 +173,17 @@ namespace fen2img
 			{ "inputfile", "" },
 			{ "inputfen", "" },
 			{ "output", "diagram" },
-			{ "size", "50" }
+			{ "size", "50" },
+            { "format", "jpeg"}
 		};
+
+        static Dictionary<string, ImageFormat> image_formats = new Dictionary<string, ImageFormat>
+        {
+            { "jpeg", ImageFormat.Jpeg },
+            { "png", ImageFormat.Png },
+            { "bmp", ImageFormat.Bmp }
+        };
+
 		static void Main(string[] args)
 		{
 			if(args.Length == 0)
@@ -205,7 +214,7 @@ namespace fen2img
 				board.SetBoard(keys["inputfen"]);
 				ChessFont font = new ChessFont("fonts\\mapping\\" + keys["font"] + ".map");
 				Bitmap bitmap = Fen2Image(board, font, int.Parse(keys["size"]));
-				bitmap.Save(keys["output"] + ".png", ImageFormat.Png);
+				bitmap.Save(keys["output"] + "." + keys["format"], image_formats[keys["format"]]);
 			}
 			// input file set
 			else if(keys["inputfile"] != "")
@@ -232,7 +241,8 @@ namespace fen2img
 							ChessFont font = new ChessFont("fonts\\mapping\\" + keys["font"] + ".map");
 							Bitmap bitmap = Fen2Image(board, font, int.Parse(keys["size"]));
                             // bitmap = CropImage(bitmap);
-							bitmap.Save(keys["folder"] + "\\diagram" + count + ".png", ImageFormat.Png);
+							bitmap.Save(keys["folder"] + "\\diagram" + count + "." + keys["format"],
+                                image_formats[keys["format"]]);
 						}
 					}
 					Console.WriteLine("processed " + count + " positions");
