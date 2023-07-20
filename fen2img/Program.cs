@@ -13,10 +13,16 @@ namespace fen2img
 		static void Info()
 		{
 			Console.WriteLine("Usage:");
-			Console.WriteLine("\tfen2img --inputfen=<fen> [--font=<font>] [--size=<field size>] [--output=<filename>] ");
-			Console.WriteLine("\tfen2img --inputfile=<fenfile> [--font=<font>] [--size=<field size>] [--folder=<foldername>]");
+			Console.WriteLine("\tfen2img --inputfen=<fen> [options] [--output=<filename>]");
+			Console.WriteLine("\tfen2img --inputfile=<fenfile> [options] [--folder=<foldername>]");
             Console.WriteLine("\tfen2img --mapped-fonts - will print list of mapped fonts");
-            Console.WriteLine("Default values: font=alpha2, size=50, output=diagram, folder=.");
+            Console.WriteLine("Supported options");
+            Console.WriteLine("\t--font=<font> \t - chess font, default 'alpha2'");
+            Console.WriteLine("\t--size=<field size> \t - size of field in pixels, default 50");
+            Console.WriteLine("\t--format=png|jpeg|bmp \t - default png");
+            Console.WriteLine("\t--crop=0|1 \t - remove white borders, default 0");
+            Console.WriteLine("\t--output=<filename> \t - default 'diagram'");
+            Console.WriteLine("\t--folder=<foldername> \t - default '.'");
        }
 
 		static Bitmap CropImage(Bitmap img)
@@ -174,7 +180,8 @@ namespace fen2img
 			{ "inputfen", "" },
 			{ "output", "diagram" },
 			{ "size", "50" },
-            { "format", "jpeg"}
+            { "format", "png"},
+            { "crop", "0" }
 		};
 
         static Dictionary<string, ImageFormat> image_formats = new Dictionary<string, ImageFormat>
@@ -214,6 +221,11 @@ namespace fen2img
 				board.SetBoard(keys["inputfen"]);
 				ChessFont font = new ChessFont("fonts\\mapping\\" + keys["font"] + ".map");
 				Bitmap bitmap = Fen2Image(board, font, int.Parse(keys["size"]));
+
+                if(keys["crop"] != "0")
+				{
+                    bitmap = CropImage(bitmap);
+				}
 				bitmap.Save(keys["output"] + "." + keys["format"], image_formats[keys["format"]]);
 			}
 			// input file set
@@ -240,8 +252,11 @@ namespace fen2img
 
 							ChessFont font = new ChessFont("fonts\\mapping\\" + keys["font"] + ".map");
 							Bitmap bitmap = Fen2Image(board, font, int.Parse(keys["size"]));
-                            // bitmap = CropImage(bitmap);
-							bitmap.Save(keys["folder"] + "\\diagram" + count + "." + keys["format"],
+                            if (keys["crop"] != "0")
+                            {
+                                bitmap = CropImage(bitmap);
+                            }
+                            bitmap.Save(keys["folder"] + "\\diagram" + count.ToString("D4") + "." + keys["format"],
                                 image_formats[keys["format"]]);
 						}
 					}
