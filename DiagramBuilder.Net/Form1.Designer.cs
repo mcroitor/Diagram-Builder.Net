@@ -377,10 +377,12 @@ namespace DiagramBuilder.Net
 			this.AutoSizeMode = AutoSizeMode.GrowOnly;
 			this.fensList.Enabled = true;
 			this.fensList.BorderStyle = BorderStyle.FixedSingle;
-			this.fensList.Columns.Add("positions");
-			this.fensList.Columns.Add("comment");
-			this.fensList.Columns[0].Width = 300;
-			this.fensList.Columns[1].Width = 300;
+            this.fensList.Columns.Add("nr");
+            this.fensList.Columns.Add("positions");
+            this.fensList.Columns.Add("comment");
+            this.fensList.Columns[0].Width = 30;
+            this.fensList.Columns[1].Width = 300;
+            this.fensList.Columns[2].Width = 300;
 			this.fensList.MultiSelect = false;
 			this.fensList.SelectedIndexChanged += FensListSelectIndex;
 			this.fensList.MouseDoubleClick += UpdateFenEntry;
@@ -397,15 +399,15 @@ namespace DiagramBuilder.Net
 		{
 			var selectedItem = this.fensList.SelectedItems[0];
 			var fenDescriptionForm = new FenDescriptionForm();
-			fenDescriptionForm.fen.Text = selectedItem.Text;
-			fenDescriptionForm.comment.Text = selectedItem.SubItems[1].Text;
+			fenDescriptionForm.fen.Text = selectedItem.SubItems[1].Text;
+			fenDescriptionForm.comment.Text = selectedItem.SubItems[2].Text;
 
 			var tmp = this.TopMost;
 			this.TopMost = false;
 			if(fenDescriptionForm.ShowDialog() == DialogResult.OK)
 			{
-				selectedItem.Text = fenDescriptionForm.fen.Text;
-				selectedItem.SubItems[1].Text = fenDescriptionForm.comment.Text;
+				selectedItem.SubItems[1].Text = fenDescriptionForm.fen.Text;
+				selectedItem.SubItems[2].Text = fenDescriptionForm.comment.Text;
 			}
 			this.TopMost = tmp;
 		}
@@ -717,7 +719,11 @@ namespace DiagramBuilder.Net
 			this.fensList.Items.Clear();
 			for (int i = 0; i < this.positions.Count; ++i)
 			{
-				this.fensList.Items.Add(this.positions[i].ToFen()).SubItems.Add(this.positions[i].comment);
+				ListViewItem item = new ListViewItem();
+				item.Text = (i + 1).ToString();
+				item.SubItems.Add(this.positions[i].ToFen());
+				item.SubItems.Add(this.positions[i].comment);
+				this.fensList.Items.Add(item);
 			}
 			this.fensList.Items[this.currentPosition].Selected = true;
 			this.fensList.Select();
