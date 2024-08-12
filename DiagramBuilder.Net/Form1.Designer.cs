@@ -65,6 +65,12 @@ namespace DiagramBuilder.Net
 				saveFileMenuItem.Click += SaveFileMenuItem_Click;
 				saveFileMenuItem.ShortcutKeys = Keys.Control | Keys.S;
 				fileMenuItem.DropDownItems.Add(saveFileMenuItem);
+
+				var importFileMenuItem = new ToolStripMenuItem("Import");
+				var importOliveMenuItem = new ToolStripMenuItem("Olive (olv)");
+				importOliveMenuItem.Click += importOliveMenuItem_Click;
+				importFileMenuItem.DropDownItems.Add(importOliveMenuItem);
+				fileMenuItem.DropDownItems.Add(importFileMenuItem);
 				fileMenuItem.DropDownItems.Add("-");
 				var exportFileMenuItem = new ToolStripMenuItem("Export");
 				exportFileMenuItem.Click += ExportFileMenuItem_Click;
@@ -667,7 +673,36 @@ namespace DiagramBuilder.Net
 
 		}
 
+		private void importOliveMenuItem_Click(object sender, EventArgs e)
+		{
+			OpenFileDialog openFileDialog = new OpenFileDialog();
+			openFileDialog.Filter = "Olive|*.olv|All files|*.*";
+			openFileDialog.InitialDirectory = Application.StartupPath + workDir;
+			if (openFileDialog.ShowDialog() == DialogResult.OK)
+			{
+				this.fileName = openFileDialog.FileName + ".epd";
+				this.Text = "DiagramBuilder.Net : " + Path.GetFileName(this.fileName);
+				Importer importer = new Importer();
+				this.positions = importer.FromOlive(openFileDialog.FileName);
+				// recent files update
+				var recent = new System.Collections.Generic.List<string>(System.IO.File.ReadLines(this.recentFiles));
 
+				while (recent.Count >= 10)
+				{
+					recent.RemoveAt(recent.Count - 1);
+				}
+
+				recent.RemoveAll(p => p.Equals(this.fileName));
+
+				recent.Insert(0, this.fileName);
+				System.IO.File.WriteAllLines(this.recentFiles, recent);
+
+				// update fen list
+				this.UpdateFenList();
+				// update view
+				this.UpdateView();
+			}
+		}
 
 		private void OpenFile(Object sender, EventArgs e)
 		{
