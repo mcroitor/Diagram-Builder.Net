@@ -8,6 +8,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Linq;
 
 namespace DiagramBuilder.Net
 {
@@ -70,6 +71,9 @@ namespace DiagramBuilder.Net
 				var importOliveMenuItem = new ToolStripMenuItem("Olive (olv)");
 				importOliveMenuItem.Click += importOliveMenuItem_Click;
 				importFileMenuItem.DropDownItems.Add(importOliveMenuItem);
+				var importPgnMenuItem = new ToolStripMenuItem("PGN (pgn)");
+				importPgnMenuItem.Click += ImportPgnMenuItem_Click;
+				importFileMenuItem.DropDownItems.Add(importPgnMenuItem);
 				fileMenuItem.DropDownItems.Add(importFileMenuItem);
 				fileMenuItem.DropDownItems.Add("-");
 				var exportFileMenuItem = new ToolStripMenuItem("Export");
@@ -352,14 +356,15 @@ namespace DiagramBuilder.Net
 			this.boardView.Text = this.positions[this.currentPosition].ToView(fonts[this.selectedFont]);
 			this.boardView.MouseClick += SetPiece;
 
+			// Исправление ComboBox выбора шрифта
 			this.fontSelect = new ComboBox();
 			var elements = new string[this.fonts.Count];
 			this.fonts.Keys.CopyTo(elements, 0);
 			this.fontSelect.Items.AddRange(elements);
 			this.fontSelect.Location = new Point(10, 550);
-			this.fontSelect.SelectedIndex = 0;
 			this.fontSelect.Width = 200;
-			this.fontSelect.SelectedIndex = this.fontSelect.FindString(selectedFont);
+			int fontIndex = this.fontSelect.FindString(selectedFont);
+			this.fontSelect.SelectedIndex = fontIndex >= 0 ? fontIndex : 0;
 			this.fontSelect.SelectedIndexChanged += FontSelect_SelectedIndexChanged;
 			this.Controls.Add(this.fontSelect);
 
@@ -403,6 +408,8 @@ namespace DiagramBuilder.Net
 
 		private void UpdateFenEntry(object sender, MouseEventArgs e)
 		{
+			if (this.fensList.SelectedItems.Count == 0)
+				return;
 			var selectedItem = this.fensList.SelectedItems[0];
 			var fenDescriptionForm = new FenDescriptionForm();
 			fenDescriptionForm.fen.Text = selectedItem.SubItems[1].Text;
@@ -421,28 +428,27 @@ namespace DiagramBuilder.Net
 		private void ExportAllToBase64FileMenuItem_Click(object sender, EventArgs e)
 		{
 			string outputName = (this.fileName == "") ? "output.base64" : Path.GetFileName(this.fileName).Split('.')[0] + "_output.base64";
-			StreamWriter writer = new StreamWriter(this.outputDir + outputName);
-			var font_name = this.fonts[this.selectedFont].GetName();
-
-			var aFont = new Font(new FontFamily(font_name), this.selectedSize, GraphicsUnit.Pixel);
-
-			for (int i = 0; i < positions.Count; ++i)
+			using (StreamWriter writer = new StreamWriter(this.outputDir + outputName))
 			{
-				Bitmap diagram = new Bitmap((int)(10.5 * this.selectedSize), (int)(10 * this.selectedSize), PixelFormat.Format24bppRgb);
-				diagram.SetResolution(this.dpi, this.dpi);
+				var font_name = this.fonts[this.selectedFont].GetName();
+				var aFont = new Font(new FontFamily(font_name), this.selectedSize, GraphicsUnit.Pixel);
 
-				Graphics g = Graphics.FromImage(diagram);
-				g.FillRectangle(Brushes.White, 0, 0, diagram.Width, diagram.Height);
-				g.DrawString(this.positions[i].ToView(fonts[this.selectedFont]), aFont, Brushes.Black, 0, 0);
-
-				using (MemoryStream memoryStream = new MemoryStream())
+				for (int i = 0; i < positions.Count; ++i)
 				{
-					diagram.Save(memoryStream, ImageFormat.Png);
-					writer.WriteLine(System.Convert.ToBase64String(memoryStream.ToArray()) + "\n");
+					Bitmap diagram = new Bitmap((int)(10.5 * this.selectedSize), (int)(10 * this.selectedSize), PixelFormat.Format24bppRgb);
+					diagram.SetResolution(this.dpi, this.dpi);
+
+					Graphics g = Graphics.FromImage(diagram);
+					g.FillRectangle(Brushes.White, 0, 0, diagram.Width, diagram.Height);
+					g.DrawString(this.positions[i].ToView(fonts[this.selectedFont]), aFont, Brushes.Black, 0, 0);
+
+					using (MemoryStream memoryStream = new MemoryStream())
+					{
+						diagram.Save(memoryStream, ImageFormat.Png);
+						writer.WriteLine(System.Convert.ToBase64String(memoryStream.ToArray()) + "\n");
+					}
 				}
 			}
-			writer.Close();
-
 			MessageBox.Show("Export done");
 		}
 
@@ -618,12 +624,13 @@ namespace DiagramBuilder.Net
 			{
 				return;
 			}
-			StreamWriter writer = new StreamWriter(fileName);
-			foreach (ChessBoard board in this.positions)
+			using (StreamWriter writer = new StreamWriter(fileName))
 			{
-				writer.Write(board.ToFen() + " ; " + board.comment + "\n");
+				foreach (ChessBoard board in this.positions)
+				{
+					writer.Write(board.ToFen() + " ; " + board.comment + "\n");
+				}
 			}
-			writer.Close();
 		}
 
 		private void SaveFileMenuItem_Click(object sender, EventArgs e)
@@ -631,7 +638,7 @@ namespace DiagramBuilder.Net
 			// Open SaveFileDialog
 			SaveFileDialog saveFileDialog = new SaveFileDialog();
 			saveFileDialog.Filter = "epd|*.epd|fen|*.fen|All files|*.*";
-			if (this.fileName.Equals("") == false)
+			if (!this.fileName.Equals(""))
 			{
 				saveFileDialog.FileName = this.fileName;
 			}
@@ -703,31 +710,68 @@ namespace DiagramBuilder.Net
 				this.UpdateView();
 			}
 		}
+		private void ImportPgnMenuItem_Click(object sender, EventArgs e)
+		{
+			OpenFileDialog openFileDialog = new OpenFileDialog();
+			openFileDialog.Filter = "Pgn|*.pgn|All files|*.*";
+			openFileDialog.InitialDirectory = Application.StartupPath + workDir;
+			if (openFileDialog.ShowDialog() == DialogResult.OK)
+			{
+				this.fileName = openFileDialog.FileName + ".epd";
+				this.Text = "DiagramBuilder.Net : " + Path.GetFileName(this.fileName);
+				Importer importer = new Importer();
+				this.positions = importer.FromPgn(openFileDialog.FileName);
+				// recent files update
+				var recent = new System.Collections.Generic.List<string>(System.IO.File.ReadLines(this.recentFiles));
 
-		private void OpenFile(Object sender, EventArgs e)
+				while (recent.Count >= 10)
+				{
+					recent.RemoveAt(recent.Count - 1);
+				}
+
+				recent.RemoveAll(p => p.Equals(this.fileName));
+
+				recent.Insert(0, this.fileName);
+				System.IO.File.WriteAllLines(this.recentFiles, recent);
+
+				// update fen list
+				this.UpdateFenList();
+				// update view
+				this.UpdateView();
+			}
+		}
+
+		private void load(string fileName)
 		{
 			this.positions.Clear();
 			this.currentPosition = 0;
-			StreamReader reader = new StreamReader(this.fileName);
-			while (reader.EndOfStream == false)
+			this.fileName = fileName;
+			using (StreamReader reader = new StreamReader(fileName))
 			{
-				string line = reader.ReadLine();
-				char[] separators = new char[] { ';', '#' };
-				string[] tmp = line.Split(separators, 2);
-				ChessBoard board = ChessBoard.Empty();
-				board.SetBoard(tmp[0].Trim());
-				if (tmp.Length > 1)
+				while (!reader.EndOfStream)
 				{
-					board.comment = tmp[1].Trim();
-				}
+					string line = reader.ReadLine();
+					char[] separators = new char[] { ';', '#' };
+					string[] tmp = line.Split(separators, 2);
+					ChessBoard board = ChessBoard.Empty();
+					board.SetBoard(tmp[0].Trim());
+					if (tmp.Length > 1)
+					{
+						board.comment = tmp[1].Trim();
+					}
 
-				this.positions.Add(board);
+					this.positions.Add(board);
+				}
 			}
-			reader.Close();
+		}
+
+		private void OpenFile(Object sender, EventArgs e)
+		{
+			this.load(this.fileName);
 			this.Text = "DiagramBuilder.Net : " + Path.GetFileName(this.fileName);
 
 			// recent files update
-			var recent = new System.Collections.Generic.List<string>(System.IO.File.ReadLines(this.recentFiles));
+			var recent = RecentFiles();
 
 			while (recent.Count >= 10)
 			{
@@ -779,20 +823,27 @@ namespace DiagramBuilder.Net
 			UpdateView();
 		}
 
-		private ToolStripItem[] GetRecentFiles()
+		private System.Collections.Generic.List<string> RecentFiles()
 		{
-			var result = new System.Collections.ArrayList();
-
-			foreach(var line in System.IO.File.ReadLines(this.recentFiles))
+			if (!System.IO.File.Exists(this.recentFiles))
 			{
-				var fileName1 = Path.GetFileName(line);
-				var item = new ToolStripMenuItem(fileName1);
-				item.Name = line;
-				item.Click += this.ReopenFile;
-				result.Add(item);
+				// create recent files file
+				System.IO.File.WriteAllText(this.recentFiles, "");
 			}
 
-			return result.ToArray(typeof(ToolStripMenuItem)) as ToolStripMenuItem[];
+			return new System.Collections.Generic.List<string>(System.IO.File.ReadLines(this.recentFiles));
+		}
+
+		private ToolStripItem[] GetRecentFiles()
+		{
+			var files = RecentFiles();
+			return files.Select(line =>
+			{
+				var fileName1 = Path.GetFileName(line);
+				var item = new ToolStripMenuItem(fileName1) { Name = line };
+				item.Click += this.ReopenFile;
+				return (ToolStripItem)item;
+			}).ToArray();
 		}
 
 		static private Bitmap CropImage(Bitmap img)

@@ -1,0 +1,22 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "name": ".NET Core Launch (console)",
+            "type": "clr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/DiagramBuilder.Net/bin/Debug/net4.8/DiagramBuilder.Net.exe",
+            "windows": {
+                "console": "externalTerminal"
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        }
+    ]
+}

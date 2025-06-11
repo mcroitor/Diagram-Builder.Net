@@ -117,6 +117,13 @@
 			return fen;
 		}
 
+		public static ChessBoard FromFen(string fen)
+		{
+			ChessBoard board = new ChessBoard();
+			board.SetBoard(fen);
+			return board;
+		}
+
 		public string ToView(ChessFont font)
 		{
 			string view = font.GetPiece("TOP") + "\n";

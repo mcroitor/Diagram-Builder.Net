@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+// Add reference to System.Configuration in your project if not already present
 using System.Configuration;
 using System.Drawing.Text;
+using System.Linq;
 using System.Windows.Forms;
 using Chess;
 
@@ -47,16 +49,24 @@ namespace DiagramBuilder.Net
 			LoadFonts();
 			var e = this.fonts.GetEnumerator();
 			e.MoveNext();
-			selectedFont = ConfigurationManager.AppSettings["DefaultFont"] ?? 
-				e.Current.Value.GetID();
-			if(ConfigurationManager.AppSettings["DefaultSize"] != null)
+			try
+			{
+				selectedFont = ConfigurationManager.AppSettings["DefaultFont"] ??
+	this.fonts.Values.FirstOrDefault()?.GetID();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error loading default font: {ex.Message}");
+				selectedFont = e.Current.Value.GetID(); // Fallback to first font
+			}
+			if (ConfigurationManager.AppSettings["DefaultSize"] != null)
 			{
 				selectedSize = int.Parse(ConfigurationManager.AppSettings["DefaultSize"]);
 			}
 			outputDir = ConfigurationManager.AppSettings["OutputDir"] ?? ".\\output\\";
 			workDir = ConfigurationManager.AppSettings["WorkDir"] ?? ".\\fens\\";
 
-			if(ConfigurationManager.AppSettings["CropImage"] != null)
+			if (ConfigurationManager.AppSettings["CropImage"] != null)
 			{
 				this.cropImage = bool.Parse(ConfigurationManager.AppSettings["CropImage"]);
 			}
@@ -69,10 +79,17 @@ namespace DiagramBuilder.Net
 			this.positions.Add(ChessBoard.Empty());
 			this.fileName = "";
 
+			var recent = RecentFiles();
+			if (recent.Count > 0)
+			{
+				load(recent[0]);
+			}
+
 			CheckIntegrity();
 			InitializeFonts();
 			InitializeComponent();
 			this.TopMost = alwaysOnTop;
+
 		}
 
 		private void CheckIntegrity()
@@ -87,7 +104,7 @@ namespace DiagramBuilder.Net
 			}
 			if (System.IO.File.Exists(this.recentFiles) == false)
 			{
-				System.IO.File.Create(this.recentFiles);
+				using (System.IO.File.Create(this.recentFiles)) { }
 			}
 
 		}
@@ -99,7 +116,15 @@ namespace DiagramBuilder.Net
 			foreach (var item in mapped_fonts)
 			{
 				var chess_font = new ChessFont(item);
-				this.fonts.Add(chess_font.GetID(), chess_font);
+				var id = chess_font.GetID();
+				if (!this.fonts.ContainsKey(id))
+				{
+					this.fonts.Add(id, chess_font);
+				}
+				else
+				{
+					Console.WriteLine($"Warning: Font {id} already exists in the collection.");
+				}
 			}
 		}
 
@@ -107,7 +132,8 @@ namespace DiagramBuilder.Net
 		{
 			chessFontsCollection = new PrivateFontCollection();
 			string[] fontFiles = System.IO.Directory.GetFiles(this.fontsDir, "*.ttf");
-			foreach(var fontFile in fontFiles) {
+			foreach (var fontFile in fontFiles)
+			{
 				chessFontsCollection.AddFontFile(fontFile);
 			}
 		}
@@ -115,7 +141,7 @@ namespace DiagramBuilder.Net
 		private int NrOfDigits(int number)
 		{
 			int result = 1;
-			while(number > 9)
+			while (number > 9)
 			{
 				++result;
 				number /= 10;

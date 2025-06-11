@@ -108,7 +108,7 @@ namespace Diagram_Builder.Net
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Button OkButton;
-		private System.Windows.Forms.Button CancelButton;
+		private new System.Windows.Forms.Button CancelButton;
 		public System.Windows.Forms.TextBox fen;
 		public System.Windows.Forms.TextBox comment;
 	}
