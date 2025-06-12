@@ -1,4 +1,5 @@
 NAME	= Chess Berlin
+ID  	= Chess Berlin
 
 TOP	= 1222222223
 LEFT	= 52

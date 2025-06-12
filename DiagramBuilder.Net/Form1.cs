@@ -27,11 +27,15 @@ namespace DiagramBuilder.Net
 		int currentPosition;
 		string fileName;
 		string currentPiece = "";
-		string fontsDir = ".\\fonts\\";
+		string fontsDir = System.IO.Path.Combine(
+			System.AppDomain.CurrentDomain.BaseDirectory,
+			"fonts");
 		bool MovePiece = false;
 		int colMovedPiece = -1;
 		int rowMovedPiece = -1;
-		string recentFiles = ".\\recent.ini";
+		string recentFiles = System.IO.Path.Combine(
+			System.AppDomain.CurrentDomain.BaseDirectory,
+			"recent.ini");
 		// image properties
 		int dpi = 300;
 

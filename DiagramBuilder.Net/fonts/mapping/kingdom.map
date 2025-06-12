@@ -1,4 +1,5 @@
 NAME	= Chess Kingdom
+ID	    = Chess Kingdom
 
 TOP	= A""""""""S
 LEFT	= $

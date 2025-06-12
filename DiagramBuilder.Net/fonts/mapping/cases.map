@@ -1,4 +1,5 @@
 NAME	= Chess Cases
+ID  	= Chess Cases
 
 TOP	= A""""""""S
 LEFT	= $

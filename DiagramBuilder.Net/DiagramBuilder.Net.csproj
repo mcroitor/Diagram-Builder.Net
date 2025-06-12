@@ -5,7 +5,7 @@
     <RootNamespace>Diagram_Builder.Net</RootNamespace>
     <AssemblyName>DiagramBuilder.Net</AssemblyName>
     <ApplicationIcon>icon.ico</ApplicationIcon>
-    <Version>1.0.1</Version>
+    <Version>2.0.2</Version>
     <Authors>Croitor Mihail</Authors>
     <Company>Sweet Home</Company>
     <PackageLicenseExpression>Copyleft</PackageLicenseExpression>
@@ -38,6 +38,12 @@
     <None Update="App.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="fens\**\*" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="fonts\**\*" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="images\**\*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,6 @@
 NAME	= Chess Alpha 2
+ID      = Chess Alpha 2
+
 TOP	= [<<<<<<<<]
 LEFT	= |
 RIGHT	= \

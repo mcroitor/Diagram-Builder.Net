@@ -1,4 +1,5 @@
 NAME	= Chess Leipzig
+ID  	= Chess Leipzig
 
 TOP	= A""""""""S
 LEFT	= $

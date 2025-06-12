@@ -44,6 +44,16 @@ namespace DiagramBuilder.Net
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(800, 600);
 			this.Text = "DiagramBuilder.Net";
+			if(this.fonts.Count == 0)
+			{
+				MessageBox.Show("No chess fonts found. Please add them to the 'fonts' directory.");
+				this.Close();
+				return;
+			}
+			if(this.fonts.ContainsKey(this.selectedFont) == false)
+			{
+				this.selectedFont = this.fonts.Keys.First();
+			}
 			var font_name = this.fonts[this.selectedFont].GetName();
 
 			// menu
