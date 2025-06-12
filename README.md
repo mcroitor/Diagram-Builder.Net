@@ -6,7 +6,7 @@ Diagram Builder, standalone version. This version is .Net Framework dependent.
 
 ## Versions history
 
-### 2.0.2
+### 2.0.3
 
 - Load last used fen file on start.
 - Import PGN format.
