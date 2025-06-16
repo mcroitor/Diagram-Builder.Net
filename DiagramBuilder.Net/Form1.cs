@@ -86,7 +86,17 @@ namespace DiagramBuilder.Net
 			var recent = RecentFiles();
 			if (recent.Count > 0)
 			{
-				load(recent[0]);
+				if (System.IO.File.Exists(recent[0]))
+				{
+					load(recent[0]);
+				}
+				else
+				{
+					// If the first recent file does not exist, remove it from the list
+					recent.RemoveAt(0);
+					// Save the updated recent files list
+					System.IO.File.WriteAllLines(this.recentFiles, recent);
+				}
 			}
 
 			CheckIntegrity();

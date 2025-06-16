@@ -391,10 +391,12 @@ namespace DiagramBuilder.Net
 			this.fensList.View = View.Details;
 			this.fensList.GridLines = true;
 			this.fensList.FullRowSelect = true;
-			this.fensList.Width = 600;
-			this.fensList.Height = 550;
+			this.fensList.Width = 350;
+			this.fensList.Height = 540;
 			this.fensList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left;
 			this.AutoScroll = true;
+			// scrollbar
+			this.fensList.Scrollable = true;
 			this.AutoSizeMode = AutoSizeMode.GrowOnly;
 			this.fensList.Enabled = true;
 			this.fensList.BorderStyle = BorderStyle.FixedSingle;
@@ -701,6 +703,9 @@ namespace DiagramBuilder.Net
 				this.Text = "DiagramBuilder.Net : " + Path.GetFileName(this.fileName);
 				Importer importer = new Importer();
 				this.positions = importer.FromOlive(openFileDialog.FileName);
+				// auto save to the default folder
+				this.fileName = this.outputDir + Path.GetFileNameWithoutExtension(this.fileName) + ".epd";
+				SavePositions();
 				// recent files update
 				var recent = new System.Collections.Generic.List<string>(System.IO.File.ReadLines(this.recentFiles));
 
